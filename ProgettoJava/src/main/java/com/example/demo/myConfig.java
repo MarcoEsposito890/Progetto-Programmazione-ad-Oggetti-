@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import Utility.Parser;
 import Utility.scannerDati;
+import Utility.Filter.FilterUtils;
 import modelloDataSet.Farmacia;
 @Configuration
 public class myConfig {
@@ -20,5 +21,9 @@ public class myConfig {
 	@Bean
 	public Parser pars() {
 		return new Parser();
+	}
+	
+	@Bean FilterUtils<Farmacia> utils(){
+		return new FilterUtils<Farmacia>();
 	}
 }

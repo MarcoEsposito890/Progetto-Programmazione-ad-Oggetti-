@@ -10,15 +10,21 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.context.annotation.Bean;
 
-
+/**
+ * Classe che modella una Farmacia (una riga del dataset). Al suo interno, oltre ai vari oggetti utilizzati per 
+ * rappresentare i campi del dataset, abbiamo un oggetto di tipo Comune che raccoglie le informazioni geografiche sulla Farmacia.
+ * @author Marco
+ *
+ */
 public class Farmacia {
 	
+	private long id; //prova a creare un bean e repository per Farmacia
 	private Comune c;
-	private long ID;
+	private int codiceID;
 	private String descrizione;
 	private String tipologia;
 	private int codiceTipologia;
-	private String partitaIVA;
+	private int partitaIVA;
 	
 	public Farmacia() {
 		
@@ -28,8 +34,8 @@ public class Farmacia {
 		return c;
 	}
 	
-	public long getID() {
-		return ID;
+	public int getId() {
+		return codiceID;
 	}
 	
 	public String getDescrizione() {
@@ -44,12 +50,20 @@ public class Farmacia {
 		return codiceTipologia;
 	}
 	
-	public String getPartitaIVA() {
+	public int getPartitaIVA() {
 		return partitaIVA;
 	}
 	
-	public void setID(long ID) {
-		this.ID=ID;
+	public double getLatitudine() {
+		return c.getLatitudine();
+	}
+	
+	public double getLongitudine() {
+		return c.getLongitudine();
+	}
+	
+	public void setID(int codiceID) {
+		this.codiceID=codiceID;
 	}
 	
 	public void setDescrizione(String descrizione) {
@@ -64,7 +78,7 @@ public class Farmacia {
 		this.codiceTipologia=codiceTipologia;
 	}
 	
-	public void setIVA(String partitaIVA) {
+	public void setIVA(int partitaIVA) {
 		this.partitaIVA=partitaIVA;
 	}
 	
@@ -76,7 +90,7 @@ public class Farmacia {
 		JSONParser parser = new JSONParser();
 		ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
 		temp.add((JSONObject) parser.parse("{\"Alias\":\"descrizione\",\"Source Field\":\"DESCRIZIONE FARMACIA\",\"Type\":\"String\"}"));
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"ID\",\"Source Field\":\"CODICE IDENTIFICATIVO FARMACIA\",\"Type\":\"long\"}"));
+		temp.add((JSONObject) parser.parse("{\"Alias\":\"codiceID\",\"Source Field\":\"CODICE IDENTIFICATIVO FARMACIA\",\"Type\":\"long\"}"));
 		temp.add((JSONObject) parser.parse("{\"Alias\":\"tipologia\",\"Source Field\":\"DESCRIZIONE TIPOLOGIA\",\"Type\":\"String\"}"));
 		temp.add((JSONObject) parser.parse("{\"Alias\":\"codiceTipologia\",\"Source Field\":\"CODICE TIPOLOGIA\",\"Type\":\"int\"}"));
 		temp.addAll(c.getMetaDati());

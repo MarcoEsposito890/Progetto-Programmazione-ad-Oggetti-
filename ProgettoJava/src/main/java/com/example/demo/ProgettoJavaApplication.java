@@ -25,11 +25,25 @@ import org.springframework.context.annotation.Bean;
 import Utility.Parser;
 import Utility.scannerDati;
 import modelloDataSet.Farmacia;
-
+/**Progetto Programmazione ad Oggetti
+ *@author Marco Esposito
+ *
+ */
 @SpringBootApplication
 public class ProgettoJavaApplication {
-	static ArrayList<Farmacia> f;
-	public static void main(String[] args) throws ParseException {
+	static ArrayList<Farmacia> Farmacie;
+	/**
+	 *  *Applicazione che, all'avvio, effettua il  download del data-set che contiene dati in formato CSV
+ *partendo dall’indirizzo fornito, dopo opportuna decodifica del JSON che contiene la URL
+ *utile per scaricare il file. Per effetuare le operazioni di Parsing viene utilizzata la classe {@link Utility.Parser}, che effettua
+ *sia il parsing del JSON che del file CSV, inserendo inoltre i dati ottenuti dal parsing negli appositi
+ *oggetti che modellano il dataset. Una volta ricavati questi ultimi, si crea un'ArrayList contenente gli oggetti di
+ *tipo Farmacia che viene iniettato all'avvio di Spring nei Rest Controller.
+	 * @param args
+	 * @throws ParseException
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws ParseException, IOException {
 		
 		Parser pars = new Parser();
 		ArrayList<String> header;
@@ -40,10 +54,11 @@ public class ProgettoJavaApplication {
 		URLConnection openConnection;
 		String data="";
 		 String line=""; 
+		 InputStream in= null;
 		try {
 		openConnection = new URL(url).openConnection();
 	    openConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-	    InputStream in = openConnection.getInputStream();
+	    in = openConnection.getInputStream();
 	    InputStreamReader reader = new InputStreamReader(in);
 		BufferedReader buf = new BufferedReader( reader ); //unisci tutto in un'unica riga (da InputStream a BufferedReader)
 			  
@@ -51,7 +66,7 @@ public class ProgettoJavaApplication {
 			   data+= line;
 			   System.out.println( line );
 		   }
-		 in.close(); //usa i finally per chiudere le connessioni
+		  //usa i finally per chiudere le connessioni
 		 } 
 		catch (MalformedURLException e) {
 			 System.out.println("Malformed URL: " + e.getMessage());
@@ -59,13 +74,16 @@ public class ProgettoJavaApplication {
 	    catch (IOException e1) {
 	    	System.out.println("I/O Exception: " + e1.getMessage());
 		}
+		finally {
+			if(in!=null) in.close();
+		}
 		
 		//ora data contiene il dataset-ID, dal quale devo ricavare l'URL al quale si trova il file csv assegnato. Utilizzo il metodo getUrl della classe Parser
 		//per fare il parsing di data (contiene un oggetto in formato JSON) e ricavare appunto l'url
 		try {
 			url = pars.getURL(data);
 			System.out.println("URL DataSet: '"+url+"'");
-			InputStream in = URI.create(url).toURL().openStream();
+			in = URI.create(url).toURL().openStream();
 			//trovato l'URL e aperta la connessione, procedo a copiare il file csv
 			Path targetPath = new File("Elenco-Farmacie.csv").toPath(); 
 			Files.copy(in, targetPath, StandardCopyOption.REPLACE_EXISTING); 
@@ -82,15 +100,18 @@ public class ProgettoJavaApplication {
 		
 	
 		pars.parsingCSV("Elenco-Farmacie.csv");
-		f=pars.getFarmacie();
+		Farmacie=pars.getFarmacie();
 		
-		SpringApplication.run(ProgettoJavaApplication.class, args);
+	SpringApplication.run(ProgettoJavaApplication.class, args);
 	}
 
-	
+	/**
+	 * Inizializzazione del Bean di tipo Farmacia iniettato nei Rest Controller all'avvio di Spring
+	 * @return  ArrayList<Farmacia>
+	 */
 	@Bean
 	public ArrayList<Farmacia> farmacie(){
-		return f;
+		return Farmacie;
 	}
 	
 }

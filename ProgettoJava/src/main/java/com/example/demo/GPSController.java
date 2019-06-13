@@ -9,11 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import Eccezioni.RESTErrorHandler;
 import Utility.Checker;
 import Utility.GPS;
 import Utility.Parser;
 import modelloDataSet.Farmacia;
-
+/**
+ * Rest Controller che si occupa delle richieste riguardanti latitudine e longitudine. Utilizza un'istanza di GPS in tal senso.
+ * @author Marco
+ *
+ */
 @RestController
 public class GPSController{
 		 GPS gps; 
@@ -26,7 +31,8 @@ public class GPSController{
 	
 	//Trova la distanza fra due farmacie, dato il nome
 		@RequestMapping("/Distanza")
-		public String distanza(@RequestParam(value="Nome1")String nome1, @RequestParam(value="Nome2")String nome2) {
+		public String distanza(@RequestParam(value="Nome1")String nome1, @RequestParam(value="Nome2")String nome2) throws RESTErrorHandler {
+			if(gps.cerca(nome1)==null && gps.cerca(nome2)==null) throw new RESTErrorHandler();
 			return "Distanza in km: "+gps.distanza(nome1, nome2);
 		}
 	

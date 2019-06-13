@@ -2,9 +2,20 @@ package Utility;
 
 import java.util.ArrayList;
 import java.math.*;
-
+/**
+ * Classe che contiene diversi metodi utili per gestire dati numerici. Oltre che funzioni di utilità come quelle trigonometriche, implementa alcuni metodi
+ * necessarie per altre classi del package Utility.
+ * @author Marco
+ *
+ */
 public class Calcolatrice {
 	
+	/**
+	 * Realizza l'algoritmo di controllo per verificare il codice di controllo delle Partite IVA. In particolare, utilizza la Formula di Lunn
+	 * per calcolare il codice di controllo (una cifra), poi lo confronta con quello della Partita IVA in ingresso (ultima cifra).
+	 * @param String - Stringa che contiene una PartitaIVA 
+	 * @return boolean - conferma o meno che il controllo sia andato a buon fine
+	 */
 	public boolean formulaLunn(String cs) {
 		double X=0; double Y=0; double Z=0; double T=0; 
 		double C=Double.parseDouble(cs.substring(cs.length()-1, cs.length()));
@@ -23,7 +34,11 @@ public class Calcolatrice {
 		if(C==(10-T)%10) return true;
 		else return false;
 	}
-	
+	/**
+	 * Calcola la media aritmetica.
+	 * @param ArrayList<Double> - ArrayList contenente i dati su cui calcolare la media
+	 * @return double - media dei dati 
+	 */
 	public double calcolaMedia(ArrayList<Double> d) {
 		int sum=0;
 		for(int i=0; i<d.size(); i++) {
@@ -31,7 +46,14 @@ public class Calcolatrice {
 		}
 		return sum/d.size();
 	}
-	
+	/**
+	 * Utilizza la "Spherical Law of Cosines" per calcolare la distanza fra due punti note longitudine e latitudine dei due punti.
+	 * @param double - maxlat
+	 * @param double - minlat
+	 * @param double - maxlon
+	 * @param double - minlon
+	 * @return double -distanza fra i due punti descritti dalle coordinate (longitudine, latitudine) in ingresso
+	 */
 	public double sphericalLawofCosines(double maxlat, double minlat, double maxlon, double minlon) {
 		return arccos(seno(minlat)*seno(maxlat) +coseno(minlat)*coseno(maxlat)*coseno(maxlon-minlon))*6371;
 	}

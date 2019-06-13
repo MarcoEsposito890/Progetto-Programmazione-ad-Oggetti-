@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import modelloDataSet.Farmacia;
-
+/**
+ * Classe utilizzata per gestire le informazioni relative a latitudine e longitudine. Estende la classe scannerDati, con cui condivide in particolare i metodi
+ * di scorrimento dell'array di Farmacie e di ricerca.
+ * @author Marco
+ *
+ */
 public class GPS extends scannerDati{
 	
 	Calcolatrice calc = new Calcolatrice();
+	ArrayList<Farmacia> f;
 	
 	public GPS(ArrayList<Farmacia> f) {
 		super(f);
@@ -15,7 +21,12 @@ public class GPS extends scannerDati{
 	
 	/// Funzioni di GPS
 
-		// trova la distanza fra due farmacie, dato il nome
+		/**Trova la distanza fra due farmacie, dati i nomi di entrambe
+		 * 
+		 * @param String - nome1
+		 * @param String - nome2
+		 * @return double - distanza fra le farmacie
+		 */
 		public double distanza(String nome1, String nome2) {
 			double lat1 = 0;
 			double lon1 = 0;
@@ -23,13 +34,13 @@ public class GPS extends scannerDati{
 			double lon2 = 0;
 
 			for (int i = 0; i < f.size(); i++) {
-				if (f.get(i).getDescrizione().equals(nome1)) {
-					lat1 = f.get(i).getComune().getLat();
-					lon1 = f.get(i).getComune().getLong();
+				if (f.get(i).getDescrizione().equals(nome1)) { //fai direttamente una verifica con cercaComune?
+					lat1 = f.get(i).getComune().getLatitudine();
+					lon1 = f.get(i).getComune().getLongitudine();
 				}
 				if (f.get(i).getDescrizione().equals(nome2)) {
-					lat2 = f.get(i).getComune().getLat();
-					lon2 = f.get(i).getComune().getLong();
+					lat2 = f.get(i).getComune().getLatitudine();
+					lon2 = f.get(i).getComune().getLongitudine();
 				}
 			}
 			if (lat1 > 0 && lon1 > 0 && lat2 > 0 && lon2 > 0) {
@@ -54,22 +65,34 @@ public class GPS extends scannerDati{
 		}*/
 		
 
-		//ritorna la farmacia più vicina a quella indicata
+		/**Ritorna la farmacia più vicina a quella indicata
+		 * 
+		 * @param String - nome della farmacia
+		 * @return Farmacia - riferimento alla farmacia più vicina
+		 */
 		public Farmacia vicina(String nome) {
 			ArrayList<Double> latitudini = new ArrayList<Double>();
 			ArrayList<Double> longitudini = new ArrayList<Double>();
 			double lat = trovaCoordinate(nome).get("Latitudine");
 			double lon = trovaCoordinate(nome).get("Longitudine");
 			for(int i=0; i<f.size(); i++) {
-				latitudini.add(f.get(i).getComune().getLat());
-				longitudini.add(f.get(i).getComune().getLat());
+				latitudini.add(f.get(i).getComune().getLatitudine());
+				longitudini.add(f.get(i).getComune().getLongitudine());
 			}
 			HashMap<String, Double> coordinate = trovaVicina(latitudini, longitudini, lat, lon);
 			return cercaCoordinate(coordinate.get("Latitudine"), coordinate.get("Longitudine"));
 		}
 		
 	
-	//Funzioni di utilità di GPS
+	/**
+	 * Calcola la distanza fra due punti, date le rispettive latitudini e longitudini. In particolare, utilizza due metodi dell'oggetto {@link Utility.Calcolatrice} che contiene,
+	 * ossia confronto, utilizzato per ordinare gli ingressi, e sphericalLawofCosines, che ritorna appunto la distanza una volta che ha ricevuto gli ingressi ordinati.
+	 * @param double - lat1
+	 * @param double - lat2
+	 * @param double - lon1
+	 * @param double - lon2
+	 * @return distanza
+	 */
 		
 	//dist = arccos( sin(minlat) * sin(maxlat) + cos(minlat) * cos(maxlat) * cos(maxlon – minlon) ) * 6371 ("Spherical Law of Cosines")
 	public double calcolaDistanza(double lat1, double lat2, double lon1, double lon2) {
@@ -83,7 +106,7 @@ public class GPS extends scannerDati{
 		return dist;
 	}
 	
-	//la velocità è in km/h. Ritorda il tempo in minuti che serve per andare da una Farmacia all'altra
+	/*//la velocità è in km/h. Ritorda il tempo in minuti che serve per andare da una Farmacia all'altra
 	public double calcolaTempo (double velocita, double distanza) {
 		//converto in metri/sec
 		velocita= velocita/(3.6);
@@ -93,9 +116,16 @@ public class GPS extends scannerDati{
 		double tempo = distanza/velocita;
 		//ritorno il tempo in minuti
 		return tempo/60;
-	}
+	}*/
 	
-	//scorre gli arraylist forniti e confronta le distanze rispetto alle latitudini fornite per trovare quella minima
+	/**Scorre gli ArrayList contenenti le latitudini e le longitudini, e ritorna le coordinate della località più vicina a quella corrispondente alle
+	 * coordinate in ingresso.
+	 * @param ArrayList<Double> - latitudini
+	 * @param ArrayList<Double> - longitudini
+	 * @param double - latitudine della località per cui voglio trovare la più vicina
+	 * @param double - longitutine della località per cui voglio trovare la più vicina
+	 * @return
+	 */
 	public HashMap<String, Double> trovaVicina(ArrayList<Double> latitudini, ArrayList<Double> longitudini, double lat, double lon) {
 		HashMap<String, Double> coordinate = new HashMap<String, Double> ();
 		double lat2=0;

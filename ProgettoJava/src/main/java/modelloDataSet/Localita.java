@@ -6,7 +6,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
+/**
+ * Classe che contiene coordinate ed indirizzo di una Farmacia (riga del dataset)
+ * @author Marco
+ *
+ */
 public class Localita {
 	
 	private double latitudine;
@@ -24,11 +28,11 @@ public class Localita {
 		this.indirizzo=indirizzo;
 	}
 	
-	public double getLat() {
+	public double getLatitudine() {
 		return latitudine;
 	}
 	
-	public double getLong() {
+	public double getLongitudine() {
 		return longitudine;
 	}
 	

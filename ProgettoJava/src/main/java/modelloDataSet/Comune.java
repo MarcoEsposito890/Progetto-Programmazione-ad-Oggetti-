@@ -1,6 +1,10 @@
 package modelloDataSet;
 
 import java.util.ArrayList;
+/** Classe che modella un Comune del dataset. Al suo interno contiene un riferimento a un oggetto Provincia. 
+ * Inoltre estende la classe Localita, che contiene coordinate ed indirizzo della Farmacia che contiene il riferimento al Comune.
+ * @author Marco Esposito
+ */
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -10,8 +14,8 @@ import org.json.simple.parser.ParseException;
 public class Comune extends Localita{
 	
 	private Provincia provincia;
-	private int codice;
-	private String descrizione;
+	private int codiceComune;
+	private String nomeComune;
 	
 	public Comune(double lat, double longi, String indirizzo) {
 		super(lat, longi, indirizzo);
@@ -21,24 +25,24 @@ public class Comune extends Localita{
 		return provincia;
 	}
 	
-	public int getCodice() {
-		return codice;
+	public int getCodiceComune() {
+		return codiceComune;
 	}
 	
-	public String getDescrizione() {
-		return descrizione;
+	public String getNomeComune() {
+		return nomeComune;
 	}
 	
 	public void setProvincia(Provincia provincia) {
 		this.provincia=provincia;
 	}
 	
-	public void setCodice(int codice) {
-		this.codice=codice;
+	public void setCodice(int codiceComune) {
+		this.codiceComune=codiceComune;
 	}
 
-	public void setDescrizione(String descrizione) {
-		this.descrizione=descrizione;
+	public void setDescrizione(String nomeComune) {
+		this.nomeComune=nomeComune;
 	}
 	
 	public ArrayList<JSONObject> getMetaDati() throws ParseException {
