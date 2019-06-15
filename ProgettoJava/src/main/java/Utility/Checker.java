@@ -16,6 +16,7 @@ public class Checker extends scannerDati{
 	ArrayList<Farmacia> f;
 	public Checker(ArrayList<Farmacia> f) {
 		super(f);
+		this.f=f;
 	}
 
 	/**Scorre l'array di farmacie e verifica che il Codice di Controllo della

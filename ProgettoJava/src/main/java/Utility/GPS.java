@@ -17,6 +17,7 @@ public class GPS extends scannerDati{
 	
 	public GPS(ArrayList<Farmacia> f) {
 		super(f);
+		this.f=f;
 	}
 	
 	/// Funzioni di GPS

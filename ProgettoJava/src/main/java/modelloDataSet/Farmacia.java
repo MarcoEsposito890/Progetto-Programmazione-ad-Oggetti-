@@ -1,5 +1,8 @@
 package modelloDataSet;
 
+import java.lang.annotation.Retention;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import javax.persistence.Entity;
@@ -9,6 +12,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.tools.javac.code.Attribute.RetentionPolicy;
+
+import Utility.MetaDataStore;
+import modelloDataSet.MetaData.metadati;
 
 /**
  * Classe che modella una Farmacia (una riga del dataset). Al suo interno, oltre ai vari oggetti utilizzati per 
@@ -16,44 +26,50 @@ import org.springframework.context.annotation.Bean;
  * @author Marco
  *
  */
-public class Farmacia {
+public class Farmacia implements MetaData{
 	
-	private long id; //prova a creare un bean e repository per Farmacia
 	private Comune c;
 	private int codiceID;
 	private String descrizione;
 	private String tipologia;
 	private int codiceTipologia;
 	private int partitaIVA;
+	public MetaDataStore dati;
 	
 	public Farmacia() {
-		
+		c=new Comune();
 	}
 	
 	public Comune getComune() {
 		return c;
 	}
 	
-	public int getId() {
+	@metadati(alias="codiceID", sourcefield="CODICE IDENTIFICATIVO FARMACIA", type="int")
+	public int getCodiceID() {
 		return codiceID;
 	}
 	
+	@metadati(alias="descrizione", sourcefield="DESCRIZIONE FARMACIA", type="String")
 	public String getDescrizione() {
 		return descrizione;
 	}
 	
+	@metadati(alias="tipologia", sourcefield="DESCRIZIONE TIPOLOGIA", type="String")
 	public String getTipologia() {
 		return tipologia;
 	}
 	
+	@metadati(alias="codiceTipologia", sourcefield="CODICE TIPOLOGIA", type="String")
 	public int getCodiceTipologia() {
 		return codiceTipologia;
 	}
 	
+	@metadati(alias="tipologia", sourcefield="PARTITA IVA", type="int")
 	public int getPartitaIVA() {
 		return partitaIVA;
 	}
 	
+	@metadati(alias="descrizione", sourcefield="CODICE IDENTIFICATIVO FARMACIA", type="String")
 	public double getLatitudine() {
 		return c.getLatitudine();
 	}
@@ -70,7 +86,7 @@ public class Farmacia {
 		this.descrizione=descrizione;
 	}
 	
-	public void setTipologia(String Tipologia) {
+	public void setTipologia(String tipologia) {
 		this.tipologia=tipologia;
 	}
 	
@@ -86,15 +102,24 @@ public class Farmacia {
 		this.c=c;
 	}
 	
-	public ArrayList<JSONObject> getMetaDati() throws ParseException {
+/**
+ * Implementa il metodo getMetaDati() dell'interfaccia MetaData. Se ritornasse semplicemente un ArrayList di JSONObject, Spring visualizzerebbe
+ * i metadati ogni volta che viene ritornato un oggetto di tipo Farmacia. Per questo motivo si inseriscono i metadati in un oggetto MetaDataStore.
+ * @return 
+ */
+	
+		public MetaDataStore getMetaDati() throws NoSuchMethodException, SecurityException, ParseException {
 		JSONParser parser = new JSONParser();
 		ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"descrizione\",\"Source Field\":\"DESCRIZIONE FARMACIA\",\"Type\":\"String\"}"));
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"codiceID\",\"Source Field\":\"CODICE IDENTIFICATIVO FARMACIA\",\"Type\":\"long\"}"));
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"tipologia\",\"Source Field\":\"DESCRIZIONE TIPOLOGIA\",\"Type\":\"String\"}"));
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"codiceTipologia\",\"Source Field\":\"CODICE TIPOLOGIA\",\"Type\":\"int\"}"));
-		temp.addAll(c.getMetaDati());
-		return temp;
+		Class<?> f = this.getClass();
+		String[] campi= {"Descrizione", "Tipologia", "CodiceTipologia", "PartitaIVA", "CodiceID"};
+		temp=MetaData.creaMetaDati(f,campi);
+		temp.addAll(c.getMetaDati().getData());
+		return new MetaDataStore(temp);
 	}
+
+	
+
+	
 
 }

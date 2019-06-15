@@ -23,23 +23,23 @@ import modelloDataSet.Farmacia;
 public class GPSController{
 		 GPS gps; 
 		
-		@Autowired public GPSController(ArrayList<Farmacia> f)
+		@Autowired public GPSController(@Qualifier("gps")GPS gps)
 		{
-		gps = new GPS(f);
+		this.gps=gps;
 		}
 	
 	
 	//Trova la distanza fra due farmacie, dato il nome
 		@RequestMapping("/Distanza")
-		public String distanza(@RequestParam(value="Nome1")String nome1, @RequestParam(value="Nome2")String nome2) throws RESTErrorHandler {
+		public String distanza(@RequestParam(value="nome1")String nome1, @RequestParam(value="nome2")String nome2) throws RESTErrorHandler {
 			if(gps.cerca(nome1)==null && gps.cerca(nome2)==null) throw new RESTErrorHandler();
 			return "Distanza in km: "+gps.distanza(nome1, nome2);
 		}
 	
 	//Trova la farmacia più vicina, dato il nome
 		@RequestMapping("/PiuVicina")
-		public Farmacia piuVicina(@RequestParam(value="Nome")String nome) {
-			if(gps.vicina(nome).equals(null)) System.out.println("Errore! I vettori devono essere della stessa dimensione");
+		public Farmacia piuVicina(@RequestParam(value="nome")String nome) throws RESTErrorHandler {
+			if(gps.cerca(nome)==null) throw new RESTErrorHandler("Farmacia");
 			return gps.vicina(nome);
 		}
 		

@@ -1,5 +1,6 @@
 package modelloDataSet;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 /** Classe che modella un Comune del dataset. Al suo interno contiene un riferimento a un oggetto Provincia. 
  * Inoltre estende la classe Localita, che contiene coordinate ed indirizzo della Farmacia che contiene il riferimento al Comune.
@@ -11,24 +12,34 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class Comune extends Localita{
+import Utility.MetaDataStore;
+import modelloDataSet.MetaData.metadati;
+
+public class Comune extends Localita implements MetaData{
 	
 	private Provincia provincia;
 	private int codiceComune;
 	private String nomeComune;
 	
+	public Comune() {
+		super();
+		provincia=new Provincia();
+	}
+	
 	public Comune(double lat, double longi, String indirizzo) {
 		super(lat, longi, indirizzo);
+		provincia=new Provincia();
 	}
 	
 	public Provincia getProvincia() {
 		return provincia;
 	}
-	
+	@metadati(alias="codiceComune", sourcefield="CODICE COMUNE ISTAT", type="int")
 	public int getCodiceComune() {
 		return codiceComune;
 	}
 	
+	@metadati(alias="NomeComune", sourcefield="DESCRIZIONE COMUNE", type="String")
 	public String getNomeComune() {
 		return nomeComune;
 	}
@@ -38,22 +49,20 @@ public class Comune extends Localita{
 	}
 	
 	public void setCodice(int codiceComune) {
-		this.codiceComune=codiceComune;
+		this.codiceComune=codiceComune; 
 	}
 
 	public void setDescrizione(String nomeComune) {
 		this.nomeComune=nomeComune;
 	}
 	
-	public ArrayList<JSONObject> getMetaDati() throws ParseException {
-		JSONParser parser = new JSONParser();
-		JSONArray jsonArr = new JSONArray();
-		ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"codice\",\"Source Field\":\"CODICE COMUNE ISTAT\",\"Type\":\"String\"}") );
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"descrizione\",\"Source Field\":\"DESCRIZIONE COMUNE\",\"Type\":\"String\"}") );
-		temp.addAll(provincia.getMetaDati());
-		temp.addAll(super.getMetaDati());
-		return temp;
+	 public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
+		String[] campi= {"CodiceComune", "NomeComune"};
+		Class<?> f = this.getClass();
+		ArrayList<JSONObject> temp=MetaData.creaMetaDati(f,campi);
+		temp.addAll(provincia.getMetaDati().getData());
+		temp.addAll(super.getMetaDati().getData());
+		return new MetaDataStore(temp);
 	}
 
 }

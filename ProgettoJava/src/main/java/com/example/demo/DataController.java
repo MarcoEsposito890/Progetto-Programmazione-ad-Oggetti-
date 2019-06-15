@@ -2,6 +2,8 @@ package com.example.demo;
 
 import java.io.File;
 import Eccezioni.RESTErrorHandler;
+import Eccezioni.tooManyArguments;
+
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.ui.Model;
@@ -9,6 +11,7 @@ import org.springframework.validation.BindingResult;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -35,6 +38,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import Utility.Parser;
 import Utility.scannerDati;
 import Utility.GPS;
@@ -48,8 +54,8 @@ import modelloDataSet.Farmacia;
 public class DataController {
 	 scannerDati scan; 
 	 
-	@Autowired public DataController(ArrayList<Farmacia> f) {
-		scan= new scannerDati(f);
+	@Autowired public DataController(@Qualifier("scanner")scannerDati scan) {
+		this.scan=scan;
 	}
 	
 	/**
@@ -58,7 +64,6 @@ public class DataController {
 	 * = uguaglianza fra numeri o stringhe
 	 * > maggiore di
 	 * < minore di
-	 * ( contiene la stringa/sottostringa indicata
 	 * @param fieldname
 	 * @param operator
 	 * @param value
@@ -71,11 +76,51 @@ public class DataController {
 		return scan.filterField(fieldname, operator, value);
 	}
 	
-	//Ritorna i metadati
-	@RequestMapping("/meta")
-	public ArrayList<JSONObject> getMeta() throws ParseException{
-		return scan.getMeta();
+	/**Ritorna i metadati degli oggetti Farmacia
+	 * 
+	 * @return
+	 * @throws ParseException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	@RequestMapping("/metaF")
+	public ArrayList<JSONObject> getMetaFarmacia() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		return scan.getMetaFarmacia();
 	}
+	
+	/**Ritorna i metadati degli oggetti Comune
+	 * 
+	 * @return
+	 * @throws ParseException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+		@RequestMapping("/metaC")
+		public ArrayList<JSONObject> getMetaComune() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+			return scan.getMetaComune();
+		}
+		
+		/**Ritorna i metadati degli oggetti Provincia
+		 * 
+		 * @return
+		 * @throws ParseException
+		 * @throws NoSuchMethodException
+		 * @throws SecurityException
+		 * @throws IllegalAccessException
+		 * @throws IllegalArgumentException
+		 * @throws InvocationTargetException
+		 */
+		@RequestMapping("/metaP")
+		public ArrayList<JSONObject> getMetaProvincia() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+			return scan.getMetaProvincia();
+		}
+		
 	
 	/**Cerca la Farmacia dato il nome
 	 * 
@@ -85,7 +130,7 @@ public class DataController {
 	 */
 	@RequestMapping("/cerca")
 	public Farmacia cerca(@RequestParam(value="nome") String nome) throws RESTErrorHandler {
-		if(scan.cerca(nome)==null) throw new RESTErrorHandler();
+		if(scan.cerca(nome)==null) throw new RESTErrorHandler(nome);
 		return scan.cerca(nome);
 	}
 	
@@ -111,22 +156,48 @@ public class DataController {
 	 */
 	@RequestMapping ("/comune")
 	public ArrayList<Farmacia> cercaPerComune(@RequestParam(value="nome") String Comune) throws RESTErrorHandler {
-		if (scan.cercaComune(Comune)==null) throw new RESTErrorHandler();
+		if (scan.cercaComune(Comune)==null) throw new RESTErrorHandler("Comune");
 		return scan.cercaPerComune(Comune);
 	}
 	
 	/**Ritorna l'elenco in formato JSON delle farmacie in una determinata provincia
-	 * 
+	 * {@link Utility.scannerDati.cercaPerProvincia}
 	 * @param Provincia
 	 * @return
 	 * @throws RESTErrorHandler
 	 */
 	@RequestMapping("/provincia")
 	public ArrayList<Farmacia> cercaPerProvincia(@RequestParam(value="nome") String Provincia) throws RESTErrorHandler {
-		if (scan.cercaProvincia(Provincia)==null) throw new RESTErrorHandler();
+		if (scan.cercaProvincia(Provincia)==null) throw new RESTErrorHandler("Provincia");
 		return scan.cercaPerProvincia(Provincia);
 	}
 	
-	//fai un metodo unico per il filtraggio in cui gli passi come RequestParam String attributo, String/Double valore, String operatore e poi implementa le funzioni di filtro come ha fatto lui
+	/** Ritorna l'elenco in formato JSON dei dispensari in un Comune, in una Provincia o nell'intero DataSet
+	 * 
+	 * @param Provincia
+	 * @param Comune
+	 * @return
+	 * @throws RESTErrorHandler
+	 * @throws tooManyArguments 
+	 */
+	@RequestMapping("/dispensari")
+	public ArrayList<Farmacia> cercaDispensari(@RequestParam(value="provincia", defaultValue="") String Provincia, @RequestParam(value="comune", defaultValue="") String Comune) throws RESTErrorHandler, tooManyArguments {
+		
+		if(!Provincia.equals("") && !Comune.equals("")) throw new tooManyArguments();
+		else if (!Provincia.equals("")) {
+		if (scan.cercaProvincia(Provincia)==null) throw new RESTErrorHandler("Provincia");
+		return scan.getDispensariProvincia(Provincia);
+		}
+		else if (!Comune.equals("")) {
+			if (scan.cercaComune(Comune)==null) throw new RESTErrorHandler("Comune");
+			return scan.getDispensariComune(Comune);
+		}
+		else return scan.cercaDispensari();
+	}
+
 	
-}
+}// fine
+	
+	
+	
+

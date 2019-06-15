@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import modelloDataSet.Comune;
 import modelloDataSet.Farmacia;
+import modelloDataSet.MetaData;
 import modelloDataSet.Provincia;
 
 import org.json.simple.JSONObject;
@@ -67,16 +68,45 @@ public class scannerDati implements Filter{
 
 	
 
-	/** Ritorna i Metadati degli oggetti Farmacia (ossia, per oggetto al suo interno, l'alias dell'oggetto, l'attributo del dataset da cui deriva e il tipo).
-	 * I Metadati sono in formato JSON.
+	/** Ritorna i Metadati degli oggetti Farmacia (ossia, per ogni oggetto al suo interno, l'alias dell'oggetto, l'attributo del dataset da cui deriva e il tipo)
+	 *  in formato JSON. Utilizza l'interfaccia {@link modelloDataSet.MetaData } per accedere all'informazione sui metadati. Poichè Farmacia contiene un riferimento
+	 *  a Comune, che contiene a sua volta un riferimento a Provincia, sono visualizzati in automatico i metadati anche di queste classi.
 	 * 
 	 * @return ArrayList<JSONObject> - Metadati in formato JSON
 	 * @throws ParseException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
 	 */
-	public ArrayList<JSONObject> getMeta() throws ParseException {
-		return f.get(0).getMetaDati();
+	public ArrayList<JSONObject> getMetaFarmacia() throws ParseException, NoSuchMethodException, SecurityException {
+		MetaData tmp = new Farmacia();
+		return tmp.getMetaDati().getData();
 	}
-
+	
+	/**Ritorna i Metadati degli oggetti Comune (ossia, per ogni oggetto al suo interno, l'alias dell'oggetto, l'attributo del dataset da cui deriva e il tipo)
+	 *  in formato JSON. Utilizza l'interfaccia {@link modelloDataSet.MetaData } per accedere all'informazione sui metadati. Poichè Comune contiene un riferimento
+	 *   a Provincia, sono visualizzati in automatico anche i metadati di Provincia.
+	 * @return ArrayList<JSONObject> - Metadati in formato JSON
+	 * @throws ParseException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException
+	 */
+	public ArrayList<JSONObject> getMetaComune() throws ParseException, NoSuchMethodException, SecurityException {
+		MetaData tmp = new Comune();
+		return tmp.getMetaDati().getData();
+	}
+	
+	/**Ritorna i Metadati degli oggetti Provincia (ossia, per ogni oggetto al suo interno, l'alias dell'oggetto, l'attributo del dataset da cui deriva e il tipo)
+	 *  in formato JSON. Utilizza l'interfaccia {@link modelloDataSet.MetaData } per accedere all'informazione sui metadati.
+	 * @return ArrayList<JSONObject> - Metadati in formato JSON
+	 * @throws ParseException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException
+	 */
+	public ArrayList<JSONObject> getMetaProvincia() throws ParseException, NoSuchMethodException, SecurityException {
+		MetaData tmp = new Provincia();
+		return tmp.getMetaDati().getData();
+	}
+	
 	/**Cerca la Farmacia dato il nome
 	 * 
 	 * @param String - nome
@@ -159,7 +189,7 @@ public class scannerDati implements Filter{
 		else return null;
 	}
 
-	/**Filtra le farmacie, ritornando solo quelle in un determinato comune
+	/**Ritorna solo le farmacie in un determinato comune
 	 * 
 	 * @param String - Comune
 	 * @return ArrayList<Farmacia> - oggetti Farmacia che contengono un riferimento all'oggetto Comune la cui descrizione coincide con la stringa in ingresso
@@ -175,7 +205,7 @@ public class scannerDati implements Filter{
 		return p;
 	}
 
-	/**Filtra le farmacie, ritornando solo quelle in una determinata provincia
+	/**Ritorna solo le farmacie in una determinata provincia
 	 * 
 	 * @param String - Provincia
 	 * @return ArrayList<Farmacia> - oggetti Farmacia che contengono un riferimento all'oggetto Provincia la cui descrizione coincide con la stringa in ingresso (contenuto in particolare nell'istanza di Comune presente in Farmacia)
@@ -219,8 +249,49 @@ public class scannerDati implements Filter{
 		}
 		return p;
 	}
-
 	
+	/**
+	 * Ritorna l'elenco dei Dispensari in una provincia.
+	 * @param String -- Nome Comune
+	 * @return ArrayList<Farmacia> -- Elenco Dispensari
+	 */
+	public ArrayList<Farmacia> getDispensariProvincia(String provincia){
+		ArrayList<Farmacia> tmp = cercaDispensari();
+		if (tmp.isEmpty()) return null;
+		for(int i=0; i<tmp.size(); i++) {
+			if(!tmp.get(i).getComune().getProvincia().getNomeProvincia().equalsIgnoreCase(provincia)) tmp.remove(i);
+		}
+		return tmp;
+	}
+	
+	/**
+	 * Ritorna l'elenco dei Dispensari in un comune.
+	 * @param String -- Nome Comune
+	 * @return ArrayList<Farmacia> -- Elenco Dispensari
+	 */
+	public ArrayList<Farmacia> getDispensariComune(String comune){
+		ArrayList<Farmacia> tmp = cercaDispensari();
+		if (tmp.isEmpty()) return null;
+		for(int i=0; i<tmp.size(); i++) {
+			if(!tmp.get(i).getComune().getNomeComune().equalsIgnoreCase(comune)) tmp.remove(i);
+		}
+		return tmp;
+	}
+	
+	/**
+	 * Ritorna l'elenco dei Dispensari tramite il campo Descrizione Tipologia (oggetto String tipologia di Farmacia).
+	 * @return ArrayList<Farmacia> -- Elenco Dispensari
+	 */
+	public ArrayList<Farmacia> cercaDispensari(){
+		ArrayList<Farmacia> tmp = new ArrayList<Farmacia>();
+		for(int i=0; i<f.size(); i++) {
+			System.out.println(f.get(i).getCodiceTipologia());
+			if(f.get(i).getCodiceTipologia()==3) tmp.add(f.get(i));
+		}
+	return tmp;
+	}
+
 }
+	
 
 	

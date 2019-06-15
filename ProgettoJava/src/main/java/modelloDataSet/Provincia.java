@@ -6,26 +6,31 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import Utility.MetaDataStore;
+import modelloDataSet.MetaData.metadati;
 /**
  * Classe che contiene informazioni sulla provincia dove si trova una Farmacia (riga del dataset)
  * @author Marco
  *
  */
-public class Provincia {
+public class Provincia implements MetaData{
 	
 	private int codiceProvincia;
 	private String sigla;
 	private String nomeProvincia;
 	
-	
+	@metadati(alias="codiceProvincia", sourcefield="CODICE PROVINCIA ISTAT", type="String")
 	public int getCodiceProvincia() {
 		return codiceProvincia;
 	}
 	
+	@metadati(alias="sigla", sourcefield="SIGLA PROVINCIA", type="String")
 	public String getSigla() {
 		return sigla;
 	}
 	
+	@metadati(alias="nomeProvincia", sourcefield="DESCRIZIONE PROVINCIA", type="String")
 	public String getNomeProvincia() {
 		return nomeProvincia;
 	}
@@ -42,13 +47,11 @@ public class Provincia {
 		this.nomeProvincia=nomeProvincia;
 	}
 	
-	public ArrayList<JSONObject> getMetaDati() throws ParseException {
-		JSONParser parser = new JSONParser();
-		ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"codiceProvincia\",\"Source Field\":\"CODICE PROVINCIA ISTAT\",\"Type\":\"String\"}") );
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"sigla\",\"Source Field\":\"SIGLA PROVINCIA\",\"Type\":\"String\"}") );
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"nomeProvincia\",\"Source Field\":\"DESCRIZIONE PROVINCIA\",\"Type\":\"String\"}") );
-		return temp;
+	public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
+		String[] campi= {"CodiceProvincia", "NomeProvincia", "Sigla"};
+		Class<?> f = this.getClass();
+		ArrayList<JSONObject> temp=MetaData.creaMetaDati(f,campi);
+		return new MetaDataStore(temp);
 	}
 
 }

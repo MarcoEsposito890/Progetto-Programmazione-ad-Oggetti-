@@ -26,8 +26,8 @@ public class CheckerController {
 	
 		 Checker check; 
 		
-		@Autowired public CheckerController(ArrayList<Farmacia> f){
-			check= new Checker(f);
+		@Autowired public CheckerController(@Qualifier("check")Checker check){
+			this.check=check;
 		}
 		
 

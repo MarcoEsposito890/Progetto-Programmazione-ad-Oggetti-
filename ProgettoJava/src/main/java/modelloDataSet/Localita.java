@@ -6,21 +6,29 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import Utility.MetaDataStore;
+import modelloDataSet.MetaData.metadati;
 /**
  * Classe che contiene coordinate ed indirizzo di una Farmacia (riga del dataset)
  * @author Marco
  *
  */
-public class Localita {
+public class Localita implements MetaData{
 	
 	private double latitudine;
 	private double longitudine;
 	private String indirizzo;
+
 	//private Comune comune;
 	
 	/*public Comune getComune() {
 		return comune;
 	}*/
+	
+	public Localita() {
+		
+	}
 	
 	public Localita(double latitudine, double longitudine, String indirizzo) {
 		this.latitudine=latitudine;
@@ -28,17 +36,20 @@ public class Localita {
 		this.indirizzo=indirizzo;
 	}
 	
+	@metadati(alias="latitudine", sourcefield="LATITUDINE", type="double")
 	public double getLatitudine() {
 		return latitudine;
 	}
 	
+	@metadati(alias="longitutine", sourcefield="LONGITUDINE", type="double")
 	public double getLongitudine() {
 		return longitudine;
 	}
 	
-	/*public void setComune(Comune comune) {
-		this.comune=comune;
-	}*/
+	@metadati(alias="indirizzo", sourcefield="INDIRIZZO", type="String")
+	public String getIndirizzo() {
+		return indirizzo;
+	}
 	
 	public void setLat(double latitudine) {
 		this.latitudine=latitudine;
@@ -49,13 +60,10 @@ public class Localita {
 	}
 	
 	
-	public ArrayList<JSONObject> getMetaDati() throws ParseException {
-		JSONParser parser = new JSONParser();
-		JSONArray jsonArr = new JSONArray();
-		ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"Latitudine\",\"Source Field\":\"LATITUDINE\",\"Type\":\"double\"}") );
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"Longitudine\",\"Source Field\":\"LONGITUDINE\",\"Type\":\"double\"}") );
-		temp.add((JSONObject) parser.parse("{\"Alias\":\"indirizzo\",\"Source Field\":\"INDIRIZZO\",\"Type\":\"String\"}") );
-		return temp;
+	public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
+		String[] campi= {"Latitudine", "Longitudine", "Indirizzo"};
+		Class<?> f = this.getClass();
+		ArrayList<JSONObject> temp=MetaData.creaMetaDati(f,campi);
+		return new MetaDataStore(temp);
 	}
 }

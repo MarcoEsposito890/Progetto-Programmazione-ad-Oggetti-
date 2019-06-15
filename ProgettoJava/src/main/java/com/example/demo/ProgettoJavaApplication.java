@@ -18,10 +18,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import Utility.Checker;
+import Utility.GPS;
 import Utility.Parser;
 import Utility.scannerDati;
 import modelloDataSet.Farmacia;
@@ -112,6 +115,24 @@ public class ProgettoJavaApplication {
 	@Bean
 	public ArrayList<Farmacia> farmacie(){
 		return Farmacie;
+	}
+	
+	@Bean
+	@Qualifier("scanner")
+	public scannerDati scanner() {
+		return new scannerDati(Farmacie);
+	}
+	
+	@Bean
+	@Qualifier("gps")
+	public GPS gps() {
+		return new GPS(Farmacie);
+	}
+	
+	@Bean
+	@Qualifier("check")
+	public Checker check() {
+		return new Checker(Farmacie);
 	}
 	
 }
