@@ -72,7 +72,7 @@ Il main crea quindi i @Bean che vengono utilizzati dai RestController per rispon
 sono creati @Bean per le classi principali del Package Utility, inizializzandoli con l'ArrayList contenente gli oggetti Farmacia.
 All'avvio dell'applicazione, Spring Boot esamina i Bean e le annotazioni inserite, e inietta nei RestController i Bean configurati. Sono stati creati
 3 Rest Controller, per gestire richieste riguardanti rispettivamente la scansione e il filtraggio dei dati, il controllo sui dati e le funzioni della classe GPS.
-I Rest Controller gestiscono quindi le richieste che mappano, ritornando oggetti in formato JSON contenenti le risposte.
+I Rest Controller gestiscono quindi le richieste che mappano, ritornando oggetti in formato JSON contenenti le risposte. Sono definite eccezioni nel caso in cui sia passato un numero errato di attributi in una richiesta, se un certo attributo non esiste etc.
 
 ![diagrammadisequenza](https://user-images.githubusercontent.com/48209182/59589469-4c65d580-90ea-11e9-9a14-a7fbfe21f1f2.png)
 
