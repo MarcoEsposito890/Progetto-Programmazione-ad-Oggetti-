@@ -26,13 +26,18 @@ Comune contiene un riferimento a un oggetto Provincia, che indica appunto la pro
 
 Le classi sono quindi organizzate in maniera tale che ogni oggetto Farmacia contenga tutti i riferimenti necessari ad estrarre i dati ad esso relativi, inclusi quelli contenuti negli oggetti Comune (che ha accesso ai metodi di Localita) e Provincia, creando quindi una sorta di incapsulamento dai dati più specifici a quelli più generali. La scelta di utilizzare un incapsulamento di questo tipo sta nel fatto che in questa maniera si può utilizzare un ArrayList contenente oggetti Farmacia per gestire facilmente tutti i dati tramite le classi del Package Utility, riportate in seguito.
 
+MetaData infine è un'interfaccia che si occupa di definire il metodo getMetaDati() che viene implementato da tutte le classi precedenti per fornire i propri metadati (che includono l'alias dell'attributo, il campo del file .csv da cui deriva e il tipo). MetaData contiene
+un metodo statico che consente di ricavare dai metodi di ogni classe le stringhe contenenti i metadati e convertirle in oggeti di tipo JSON che possono poi essere ritornati quando viene ricevuta una richiesta di GET per i metadati. Il metodo è generico (prende in ingresso un oggetto Classe generico e un elenco di campi generico) e viene utilizzato da tutte le classi che implementano l'interfaccia.
+
+Ulteriori delucidazioni sui singoli metodi usati sono nel JavaDoc relativo.
+
 ## Il Package Utility
 
 ![utility](https://user-images.githubusercontent.com/48209182/59623705-23b6fd80-9135-11e9-80df-55720ff6eb75.png)
 
 Il Package Utility presenta diverse classi utilizzate per effettuare elaborazioni, filtraggio e controlli sui dati. 
 In particolare sono presenti le seguenti classi:
-  * Parser, utilizzata per fare operazioni di parsing, sia per ricavare (come descritto meglio in seguito) l'url del dataset in formato     .csv, sia per fare il parsing di quest'ultimo e ricavare header e dati. Inoltre si occupa di utilizzare i dati ricavati dal persing     per creare gli oggetti che modellano il dataset
+  * Parser, utilizzata per fare operazioni di parsing, sia per ricavare (come descritto meglio in seguito) l'url del dataset in formato     .csv, sia per fare il parsing di quest'ultimo e ricavare header e dati. Inoltre si occupa di utilizzare i dati ricavati dal parsing     per creare gli oggetti che modellano il dataset
   * Calcolatrice, utilizzata per effettuare calcoli, medie, confronti e per il calcolo della Formula di Lunn e della *Spherical Law of Cosines* utilizzate rispettivamente in Checker e GPS;
   * scannerDati, classe per il filtraggio, lo scorrimento e la ricerca di elementi. Viene inizializzata dal costruttore con un ArrayList di oggetti Farmacia, 
     sui quali effettua direttamente le operazioni elencate. Implementa l'interfaccia Filters ed utilizza un'istanza di FilterUtils per le operazioni di filtraggio;
