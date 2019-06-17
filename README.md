@@ -1,4 +1,4 @@
-# Progetto-Programmazione-ad-Oggetti-
+# Progetto Programmazione ad Oggetti
 Progetto Programmazione ad Oggetti A.A. 2018/2019 
 
 Il progetto consiste nel modellare un data-set creando un insieme di classi e sfruttando i principi della Programmazione ad Oggetti, e 
@@ -21,10 +21,11 @@ Di seguito si riportano i casi d'uso dell'applicazione, le scelte fatte per la m
 
 ## Il Package Utility
 
-![utility](https://user-images.githubusercontent.com/48209182/59595841-df0c7180-90f6-11e9-8043-a4c7d283f413.png)
+![utility](https://user-images.githubusercontent.com/48209182/59623705-23b6fd80-9135-11e9-80df-55720ff6eb75.png)
 
 Il Package Utility presenta diverse classi utilizzate per effettuare elaborazioni, filtraggio e controlli sui dati. 
 In particolare sono presenti le seguenti classi:
+  * Parser, utilizzata per fare operazioni di parsing, sia per ricavare (come descritto meglio in seguito) l'url del dataset in formato     .csv, sia per fare il parsing di quest'ultimo e ricavare header e dati. Inoltre si occupa di utilizzare i dati ricavati dal persing     per creare gli oggetti che modellano il dataset
   * Calcolatrice, utilizzata per effettuare calcoli, medie, confronti e per il calcolo della Formula di Lunn e della *Spherical Law of Cosines* utilizzate rispettivamente in Checker e GPS;
   * scannerDati, classe per il filtraggio, lo scorrimento e la ricerca di elementi. Viene inizializzata dal costruttore con un ArrayList di oggetti Farmacia, 
     sui quali effettua direttamente le operazioni elencate. Implementa l'interfaccia Filters ed utilizza un'istanza di FilterUtils per le operazioni di filtraggio;
