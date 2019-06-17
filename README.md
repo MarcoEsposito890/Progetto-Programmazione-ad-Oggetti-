@@ -17,6 +17,10 @@ Di seguito si riportano i casi d'uso dell'applicazione, le scelte fatte per la m
 
 ![casi d'uso (1)](https://user-images.githubusercontent.com/48209182/59587173-f7739080-90e4-11e9-9ed7-12a1d33ceec7.png)
 
+L'applicazione consente il download dei dati specificati e il loro parsing e modelizzazione. Inoltre, come già detto, scopo principale dell'applicazione è di implementare API (*Application Programming Interface*) tramite il modello REST (*Representational State Transfer*) che consente a un Client di inviare richieste verso l'applicazione, che risponde con la risposta appropriata. Le richieste vengono fatte tramite il metodo HTTP GET e specificano il tipo di richiesta, la risorsa a cui si è interessati e il tipo di azione da svolgere sulla risorsa (ex. *http://localhost:8080/filtro?campo=latitudine&operatore=>&valore=40* specifica un'operazione di filtraggio sull'attributo latitudine e con l'operatore e il valore indicati).
+
+Sono quindi consentite diverse richieste che consentono principalmente la visualizzazione del data-set o di parte di esso, il filtraggio dei dati, operazioni di controllo (ad esempio, sui codici di controllo delle Partite IVA) e di elaborazione (calcolo della distanza fra due farmacie, statistiche sul numero di farmacie o dispensari etc.).
+
 ## Modello del Dataset
 
 ![modello](https://user-images.githubusercontent.com/48209182/59630775-7816a900-9146-11e9-93b1-6ddd2a37507f.png)
