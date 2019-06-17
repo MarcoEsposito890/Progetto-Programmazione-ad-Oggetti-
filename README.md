@@ -19,6 +19,13 @@ Di seguito si riportano i casi d'uso dell'applicazione, le scelte fatte per la m
 
 ## Modello del Dataset
 
+![modello](https://user-images.githubusercontent.com/48209182/59624709-c7a1a880-9137-11e9-8084-52c65475c17e.png)
+
+Come già detto, il data-set assegnato rappresenta le Farmacie della regione Campania. Il modello usato quindi rappresenta ogni Farmacia (una riga del file "Elenco-Farmacie.csv") come un oggetto omonimo contenente gli attributi riportati nel dataset come nome, partita IVA, tipologia etc. Ogni Farmacia contiene inoltre un riferimento ad un oggetto Comune, che rappresenta appunto il comune in cui si trova la Farmacia. La classe Comune estende la classe Localita, contenente informazioni sulla latitudine e la longitudine. Infine, ogni oggetto
+Comune contiene un riferimento a un oggetto Provincia, che indica appunto la provincia in cui si trova il comune.
+
+Le classi sono quindi organizzate in maniera tale che ogni oggetto Farmacia contenga tutti i riferimenti necessari ad estrarre i dati ad esso relativi, inclusi quelli contenuti negli oggetti Comune (che ha accesso ai metodi di Localita) e Provincia, creando quindi una sorta di incapsulamento dai dati più specifici a quelli più generali. La scelta di utilizzare un incapsulamento di questo tipo sta nel fatto che in questa maniera si può utilizzare un ArrayList contenente oggetti Farmacia per gestire facilmente tutti i dati tramite le classi del Package Utility, riportate in seguito.
+
 ## Il Package Utility
 
 ![utility](https://user-images.githubusercontent.com/48209182/59623705-23b6fd80-9135-11e9-80df-55720ff6eb75.png)
