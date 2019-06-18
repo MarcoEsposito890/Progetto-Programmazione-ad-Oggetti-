@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import java.io.File;
+
+import Eccezioni.OperatorException;
 import Eccezioni.RESTErrorHandler;
 import Eccezioni.tooManyArguments;
 
@@ -70,10 +72,14 @@ public class DataController {
 	 * @return
 	 * @throws SecurityException 
 	 * @throws NoSuchFieldException 
+	 * @throws RESTErrorHandler 
+	 * @throws OperatorException 
 	 */
 	@RequestMapping ("/filtro") 
-	public Collection filtro (@RequestParam(value="campo") String fieldname, @RequestParam(value="operatore") String operator, @RequestParam(value="valore") Object value) throws NoSuchFieldException, SecurityException{ 
-		return scan.filterField(fieldname, operator, value);
+	public Collection filtro (@RequestParam(value="campo") String fieldname, @RequestParam(value="operatore") String operator, @RequestParam(value="valore") Object value) throws NoSuchFieldException, SecurityException, RESTErrorHandler, OperatorException{ 
+		if ((!operator.equals(">")) && (!operator.equals("<")) && (!operator.equals("=="))) throw new OperatorException();
+		if(scan.filterField(fieldname, operator, value)==null) throw new RESTErrorHandler("Attributo");
+		else return scan.filterField(fieldname, operator, value);
 	}
 	
 	/**Ritorna i metadati degli oggetti Farmacia

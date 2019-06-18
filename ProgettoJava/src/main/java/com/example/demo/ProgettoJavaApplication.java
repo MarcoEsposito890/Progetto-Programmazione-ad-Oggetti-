@@ -1,9 +1,7 @@
 package com.example.demo;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,7 +39,7 @@ public class ProgettoJavaApplication {
  *utile per scaricare il file. Per effetuare le operazioni di Parsing viene utilizzata la classe {@link Utility.Parser}, che effettua
  *sia il parsing del JSON che del file CSV, inserendo inoltre i dati ottenuti dal parsing negli appositi
  *oggetti che modellano il dataset. Una volta ricavati questi ultimi, si crea un'ArrayList contenente gli oggetti di
- *tipo Farmacia che viene iniettato all'avvio di Spring nei Rest Controller.
+ *tipo Farmacia (rappresentanti una riga del file .csv) che viene iniettato all'avvio di Spring nei Rest Controller.
 	 * @param args
 	 * @throws ParseException
 	 * @throws IOException
@@ -49,15 +47,13 @@ public class ProgettoJavaApplication {
 	public static void main(String[] args) throws ParseException, IOException {
 		
 		Parser pars = new Parser();
-		ArrayList<String> header;
-		ArrayList<HashMap<String, String>> dati;
 		//eseguo il parsing del dataset-ID/download dei file csv
 		//prima di tutto salvo il dataset-ID all'interno della variabile String data, copiando il contenuto dell'url assegnato
 		String url = "https://www.dati.gov.it/api/3/action/package_show?id=46fd5cc3-300a-45ae-89de-98e24919e2d3";
 		URLConnection openConnection;
 		String data="";
-		 String line=""; 
-		 InputStream in= null;
+		String line=""; 
+		InputStream in= null;
 		try {
 		openConnection = new URL(url).openConnection();
 	    openConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
@@ -105,7 +101,8 @@ public class ProgettoJavaApplication {
 		pars.parsingCSV("Elenco-Farmacie.csv");
 		Farmacie=pars.getFarmacie();
 		
-	SpringApplication.run(ProgettoJavaApplication.class, args);
+		
+		SpringApplication.run(ProgettoJavaApplication.class, args);
 	}
 
 	/**

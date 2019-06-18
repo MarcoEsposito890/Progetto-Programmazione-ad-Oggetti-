@@ -2,13 +2,10 @@ package modelloDataSet;
 
 import java.util.ArrayList;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Utility.MetaDataStore;
-import modelloDataSet.MetaData.metadati;
 /**
  * Classe che contiene informazioni sulla provincia dove si trova una Farmacia (riga del dataset)
  * @author Marco
@@ -39,7 +36,7 @@ public class Provincia implements MetaData{
 		this.sigla=sigla;
 	}
 	
-	public void setCodice(int codice) {
+	public void setCodice(int codiceProvincia) {
 		this.codiceProvincia=codiceProvincia;
 	}
 

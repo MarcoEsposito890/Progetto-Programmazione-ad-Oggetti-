@@ -1,24 +1,12 @@
 package modelloDataSet;
 
-import java.lang.annotation.Retention;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import javax.persistence.Entity;
-
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.tools.javac.code.Attribute.RetentionPolicy;
 
 import Utility.MetaDataStore;
-import modelloDataSet.MetaData.metadati;
 
 /**
  * Classe che modella una Farmacia (una riga del dataset). Al suo interno, oltre ai vari oggetti utilizzati per 
@@ -34,7 +22,7 @@ public class Farmacia implements MetaData{
 	private String tipologia;
 	private int codiceTipologia;
 	private int partitaIVA;
-	public MetaDataStore dati;
+	
 	
 	public Farmacia() {
 		c=new Comune();
@@ -67,15 +55,6 @@ public class Farmacia implements MetaData{
 	@metadati(alias="tipologia", sourcefield="PARTITA IVA", type="int")
 	public int getPartitaIVA() {
 		return partitaIVA;
-	}
-	
-	@metadati(alias="descrizione", sourcefield="CODICE IDENTIFICATIVO FARMACIA", type="String")
-	public double getLatitudine() {
-		return c.getLatitudine();
-	}
-	
-	public double getLongitudine() {
-		return c.getLongitudine();
 	}
 	
 	public void setID(int codiceID) {

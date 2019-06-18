@@ -1,20 +1,18 @@
 package Utility;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-
-import modelloDataSet.Comune;
-import modelloDataSet.Farmacia;
-import modelloDataSet.MetaData;
-import modelloDataSet.Provincia;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import Utility.Filter.Filter;
 import Utility.Filter.FilterUtils;
+import modelloDataSet.Comune;
+import modelloDataSet.Farmacia;
+import modelloDataSet.MetaData;
+import modelloDataSet.Provincia;
 /**Classe che si occupa di cercare e scorrere i dati in un ArrayList contente oggetti di tipo Farmacia. Viene utilizzata in particolare dai Controller per elaborare i dati
  * e ritornare i risultati delle elaborazioni, assieme alle classi che la estendono, GPS e Checker, che fanno ulteriori elaborazioni sull'ArrayList di Farmacia.
  * 
@@ -36,13 +34,25 @@ public class scannerDati implements Filter{
 		FilterUtils<Farmacia> utils = new FilterUtils<Farmacia>();
 		boolean has=false;
 		boolean has2=false;
+		boolean has3=false;
+		//i try-catch seguenti verificano a quale classe appartiene il campo indicato dal parametro fieldName
 		try {
 			Comune.class.getDeclaredField(fieldName);
 			has=true;
+			
 		}
 			catch(NoSuchFieldException e1) {
 				has=false;
 			}
+		
+		try {
+			Comune.class.getSuperclass().getDeclaredField(fieldName);
+			has=true;
+		}
+		catch(NoSuchFieldException e1) {
+			has=false;
+		}
+		
 		try {
 			Provincia.class.getDeclaredField(fieldName);
 			has2=true;
@@ -50,19 +60,27 @@ public class scannerDati implements Filter{
 			catch(NoSuchFieldException e1) {
 				has2=false;
 			}
-		System.out.println(has);
-		if(has) {
-			System.out.println("YAS");
+		
+		try {
+			Farmacia.class.getDeclaredField(fieldName);
+			has3=true;
+		}
+			catch(NoSuchFieldException e1) {
+				has3=false;
+			}
+		
+		if(has) { //il filtraggio è fatto su un membro di Comune o Localita
 			String classe = "comune";
 			return utils.select(f, fieldName, operator, value, classe, null, false);
-		} else if(has2) {
+		} else if(has2) {// il filtraggio è fatto su un membro di Provincia
 			String classe1 = "comune";
 			String classe2 = "provincia";
 			return utils.select(f, fieldName, operator, value, classe1, classe2, true);
 		}
-		else {
+		else if (has3){// il filtraggio è fatto su un membro di Farmacia che non sia uno dei precedenti
 			return utils.select(f, fieldName, operator, value);
 		}
+		else return null;
 	}
 	
 
@@ -236,10 +254,13 @@ public class scannerDati implements Filter{
 			Farmacia temp = f.get(i);
 			Provincia temp2 = temp.getComune().getProvincia();
 			if (temp2.getNomeProvincia().equalsIgnoreCase(provincia)) {
+				int tmp=temp.getPartitaIVA();
 				codice = Integer.toString(temp2.getCodiceProvincia());
 				iva = Integer.toString(temp.getPartitaIVA());
-				if (iva.contentEquals("0"))
+				if (tmp==0) {
 					p.add("Farmacia " + temp.getDescrizione() + " senza Partita Iva disponibile");
+					break;
+				}
 				else if (((Checker) this).checkMismatch(iva, temp2))
 					p.add(iva);
 				else

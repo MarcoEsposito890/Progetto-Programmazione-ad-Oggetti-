@@ -2,13 +2,10 @@ package modelloDataSet;
 
 import java.util.ArrayList;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Utility.MetaDataStore;
-import modelloDataSet.MetaData.metadati;
 /**
  * Classe che contiene coordinate ed indirizzo di una Farmacia (riga del dataset)
  * @author Marco

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 
 import org.json.simple.JSONArray;
@@ -27,10 +28,10 @@ public class Parser{
 	
 	/**
 	 * Metodo utilizzato per effettuare il parsing del file. In particolare, inizialmente salva l'header del file in un ArrayList; poi crea 
-	 * un ArrayList di HashMap<String, String>, in cui, per ogni farmacia (riga) presente nel dataset 
-	 * salva le coppie chiave-valore corrispondenti agli attributi dell'header. Al termine del parsing, si ha quindi a disposizione l'ArrayList campi,
+	 * un ArrayList di HashMap<String, String>, in cui, per ogni riga (farmacia) nel dataset 
+	 * salva le coppie attributo-valore corrispondenti agli attributi dell'header e al loro corrispondente valore per ogni riga. Al termine del parsing, si ha quindi a disposizione l'ArrayList campi,
 	 * che contiene gli attributi dell'header, ed è accessibili con il metodo getter della classe Parser, e l'ArrayList dati, contentente un HashMap per ogni riga
-	 * del file CSV, anch'esso accessibile con il corrispondente metodo getter.
+	 * del file CSV, anch'essa accessibile con il corrispondente metodo getter.
 	 * @param filename - nome del file in formato CSV di cui fare il parsing
 	 */
 	public void parsingCSV(String filename) {
@@ -123,43 +124,58 @@ public class Parser{
 	 */
 	//crea un ArrayList di oggetti Farmacia, organizzando i dati nelle classi opportune (vedere diagrammi UML) ed effettuando le opportune conversioni se necessario
 	public ArrayList<Farmacia> getFarmacie(){
-		ArrayList<Farmacia> farmacie = new ArrayList<Farmacia>();
+		ArrayList<Farmacia> farmacie = new ArrayList<Farmacia>(); 
+		ArrayList<Comune> comuni = new ArrayList<Comune>();
+		ArrayList<Provincia> province = new ArrayList<Provincia>();
 		String dummy="";
 		String dummy2="";
 		for(int i=0; i<dati.size()-1; i++) { //rivedi qui dati.size()-1 + ECCEZIONE SE DATI è VUOTO!
 			Farmacia temp = new Farmacia();
-			try {
-			//Seguendo lo schema di incapsulamento dei dati, creo prima un oggetto Provincia, che andrà inserito nell'oggetto Comune
-			Provincia p = new Provincia();
-			p.setDescrizione(dati.get(i).get("DESCRIZIONE PROVINCIA")); 
-			p.setCodice(Integer.parseInt(dati.get(i).get("CODICE PROVINCIA ISTAT")));
-			p.setSigla(dati.get(i).get("SIGLA PROVINCIA"));
 			
-			//Si crea un oggetto Comune, il quale estende la classe Localita (quindi estraiamo prima dai dati i costruttori della superclasse)
+			//Seguendo lo schema di incapsulamento dei dati, creo prima un oggetto Provincia, che andrà inserito poi nell'oggetto Comune. Aggiungo un controllo per non avere oggetti Provincia duplicati (più comuni possono fare riferimento allo stesso oggetto Provincia)
+			Provincia p = new Provincia();
+			p = new Provincia();
+			p.setDescrizione(dati.get(i).get("DESCRIZIONE PROVINCIA"));
+			int tmp=Integer.parseInt(dati.get(i).get("CODICE PROVINCIA ISTAT"));
+			p.setCodice(tmp);
+			p.setSigla(dati.get(i).get("SIGLA PROVINCIA")); 
+			if (province.contains(p)) p=province.get(province.indexOf(p));
+			else province.add(p);
+			
+			//Si crea un oggetto Comune, il quale estende la classe Localita (quindi estraiamo prima dai dati i costruttori della superclasse). Come sopra, controllo prima di non averne creato uno uguale
 			dummy= dati.get(i).get("LATITUDINE").replace(',', '.');
+			if(dummy.contains("-")) dummy = "0";
 			dummy2=dati.get(i).get("LONGITUDINE").replace(',', '.');
+			if(dummy2.contains("-")) dummy2 = "0";
 			String indirizzo= dati.get(i).get("INDIRIZZO");
 			Comune c = new Comune(Double.parseDouble(dummy), Double.parseDouble(dummy2), indirizzo);
 			c.setProvincia(p);
 			c.setCodice(Integer.parseInt(dati.get(i).get("CODICE COMUNE ISTAT")));
 			c.setDescrizione(dati.get(i).get("DESCRIZIONE COMUNE"));
+			if (comuni.contains(c)) c=comuni.get(comuni.indexOf(p));
+			else comuni.add(c);
 			
 			//Infine si popola l'oggetto Farmacia, passandogli il riferimento all'oggetto Comune creato prima oltre i dati prelevati dal DataSet
 			temp.setCodiceTipologia(Integer.parseInt(dati.get(i).get("CODICE TIPOLOGIA")));
 			temp.setDescrizione(dati.get(i).get("DESCRIZIONE FARMACIA"));
 			temp.setID(Integer.parseInt(dati.get(i).get("CODICE IDENTIFICATIVO FARMACIA")));
 			temp.setTipologia(dati.get(i).get("DESCRIZIONE TIPOLOGIA"));
-			int IVA=Integer.parseInt(dati.get(i).get("PARTITA IVA"));
-			temp.setIVA(IVA);
+			Double IVA;
+			try {
+			IVA=Double.parseDouble(dati.get(i).get("PARTITA IVA"));
+			} catch(NumberFormatException e) {
+				IVA=0.0;
+			}
+			temp.setIVA(((Double) IVA).intValue());
+			System.out.println(((Double) IVA).intValue());
 			temp.setComune(c);
 			farmacie.add(temp);
-		}
-			catch(NumberFormatException e) {
+		
+			/*catch(NumberFormatException e) {
 				if(dummy.contains("-")) dummy = "0"; //inserisco zero dove non c'è un valore disponibile per il campo
 				if(dummy2.contains("-")) dummy2 = "0"; //idem (ho bisogno di fare il controllo su 2 stringhe perchè devo mantenere sia i valori di latitudine che di longitudine prima di creare Comune). 
-			}
+			}*/
 		}
-		
 		return farmacie;
 	}
 }

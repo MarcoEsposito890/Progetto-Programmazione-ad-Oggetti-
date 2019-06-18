@@ -52,22 +52,25 @@ public class Checker extends scannerDati{
 		}
 	
 	/**controlla se c'è un mismatch fra la partita IVA e il codice Provincia (terzultima e penultima cifra della partita IVA).
-	 * 
+	 * Le Farmacie di cui non è disponibile la partita IVA non vengono considerate.
 	 * @param String - Partita IVA
 	 * @param Provincia - riferimento all'oggetto Provincia su cui fare il controllo
 	 * @return boolean - conferma o meno che il controllo sia andato a buon fine
 	 */
 	public boolean checkMismatch(String iva, Provincia p) {
+		if (iva.equals("0")) return true;
 		String codice = Integer.toString(p.getCodiceProvincia());
 		if(iva.substring(iva.length() - 3, iva.length() - 1).equals(codice)) return true;
 		return false;
 	}
 	
-	
-	/*public ArrayList<Farmacia> checkNoAttributo(String attributo, ArrayList<Farmacia> f){
-		ArrayList <Farmacia> temp = new ArrayList<Farmacia>();
-		for(int i=0; i<)
-	}*/
+	public int attributoMancante(String fieldName) throws NoSuchFieldException, SecurityException {
+		ArrayList<Farmacia> tmp = new ArrayList<Farmacia>();
+		tmp=(ArrayList<Farmacia>) super.filterField(fieldName, "==", "0");
+		return tmp.size();
+		
+	}
+
 	
 }
 

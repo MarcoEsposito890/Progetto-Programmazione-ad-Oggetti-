@@ -1,21 +1,15 @@
 package com.example.demo;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import Eccezioni.RESTErrorHandler;
 import Utility.Checker;
-import Utility.Parser;
-import modelloDataSet.Farmacia;
 /**
  * Rest Controller che si occupa delle richieste per il controllo dei dataset. Utilizza un istanza di Checker in tal senso.
  * @author Marco
@@ -57,6 +51,10 @@ public class CheckerController {
 			return check.partitaIva(provincia);
 		}
 		
+		@RequestMapping("/campiVuoti")
+		public int noAttributo(@RequestParam(value="attributo") String fieldName) throws NoSuchFieldException, SecurityException{
+			return check.attributoMancante(fieldName);
+		}
 		//Dato un attributo, controlla se ci siano farmacie che non hanno un valore settato per quell'attributo
 		
 

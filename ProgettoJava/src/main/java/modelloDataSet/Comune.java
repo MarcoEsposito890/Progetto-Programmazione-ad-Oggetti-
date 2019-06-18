@@ -1,19 +1,15 @@
 package modelloDataSet;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 /** Classe che modella un Comune del dataset. Al suo interno contiene un riferimento a un oggetto Provincia. 
  * Inoltre estende la classe Localita, che contiene coordinate ed indirizzo della Farmacia che contiene il riferimento al Comune.
  * @author Marco Esposito
  */
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Utility.MetaDataStore;
-import modelloDataSet.MetaData.metadati;
 
 public class Comune extends Localita implements MetaData{
 	
