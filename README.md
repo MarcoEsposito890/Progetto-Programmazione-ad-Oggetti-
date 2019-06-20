@@ -31,7 +31,7 @@ Le classi sono quindi organizzate in maniera tale che ogni oggetto Farmacia cont
 
 MetaData infine è un'interfaccia che si occupa di definire il metodo getMetaDati(), che viene implementato da tutte le classi precedenti per fornire i propri metadati (che includono l'alias dell'attributo, il campo del file .csv da cui deriva e il tipo) incapsulandoli in un oggetti di tipo MetaDataStore. MetaData contiene un metodo statico che consente di ricavare dai metodi di ogni classe le stringhe contenenti i metadati e convertirle in oggetti di tipo JSON che possono poi essere visualizzati da Spring quando viene ricevuta una richiesta di GET per i metadati. Il metodo è generico (prende in ingresso un oggetto Classe generico e un elenco di campi generico) e viene utilizzato da tutte le classi che implementano l'interfaccia.
 
-Ulteriori delucidazioni sui singoli metodi usati sono nel JavaDoc del progetto.
+Ulteriori delucidazioni sui singoli metodi usati sono nel JavaDoc del progetto (cartella ProgettoJav/doc/modelloDataSet).
 
 ## Il Package Utility
 
@@ -51,7 +51,7 @@ Il package Filters contenuto in Utility possiede infine:
   * Filter, interfaccia implementata da scannerDati contenente il metodo filterField;
   * FilterUtils, classe che contiene metodi utilizzati per il filtraggio, in particolare per effettuare confronti e per costruire le Collection contenenti i valori filtrati. I metodi sono volutamente generici per permettere di filtrare diversi tipi di Collection e con diversi operatori. Consente inoltre di estrarre una colonna dal data-set (un attributo).
   
-Maggiori dettagli sui singoli metodi delle varie classi sono contenuti nel JavaDoc del progetto.
+Maggiori dettagli sui singoli metodi delle varie classi sono contenuti nel JavaDoc del progetto (cartella ProgettoJava/doc/Utility).
 
 ## Fasi dell'Applicazione
 
@@ -78,5 +78,22 @@ Un'ulteriore esempio di interazione è riportato in seguito, per quel che riguar
 
 ![filter (2)](https://user-images.githubusercontent.com/48209182/59802236-e2ffe580-92e8-11e9-9572-58121488e143.png)
 
+## Query String di esempio
 
+Altre richieste possibili per testare i Rest Controller sono le seguenti:
+
+ * http://localhost:8080/filtro?campo=longitudine&operatore=%3C&valore=14 (farmacie con longitudine <14);
+ * http://localhost:8080/metaC (metadati degli oggetti Comune);
+ * http://localhost:8080/cerca?nome=FARMACIA%20PADULA%20SNC%20DI%20PASQUALE%20PADULA%20E%20C (cerca la farmacia, dato il nome);
+ * http://localhost:8080/coordinate?lat=41.16866648&long=15.11105952 (cerca la farmacia, date le coordinate);
+ * http://localhost:8080/comune?nome=BENEVENTO (ritorna le farmacie in un comune);
+ * http://localhost:8080/provincia?nome=BENEVENTO (ritorna le farmacie in una provincia);
+ * http://localhost:8080/dispensari?provincia=CASERTA (ritorna i dispensari in una provincia)
+ * http://localhost:8080/dispensari?comune=SESSA%20AURUNCA (ritorna i dispensari in un comune)
+ * http://localhost:8080/stat?campo=latitudine&operatore=max (trova la latitudine massima)
+ * http://localhost:8080/checkIVA?provincia=BENEVENTO (controlla le partite IVA delle farmacie nella provincia data)
+ * http://localhost:8080/partitaIVA?provincia=BENEVENTO (ritorna le partite IVA delle farmacie in una provincia)
+ * http://localhost:8080/campiVuoti?attributo=latitudine (conta il numero di campi vuoti per quell'attributo)
+ * http://localhost:8080/PiuVicina?nome=FLOVILLA%20MARIO (trova la farmacia più vicina a quella data)
+ * http://localhost:8080/Distanza?nome1=IACOBELLI%20CINZIA%20ROSA&nome2=FLOVILLA%20MARIO (calcola la distanza in km, dati i nomi)
 
