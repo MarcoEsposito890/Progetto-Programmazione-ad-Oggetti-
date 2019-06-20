@@ -1,7 +1,7 @@
 package Eccezioni;
 /**
- * Classe che gestisce eccezioni riguardanti i Rest Controller. Il messaggio di default si presenta quando un oggetto/informazioni cercati non sono presenti nel dataset
- * @author Marco
+ * Classe che gestisce eccezioni riguardanti i Rest Controller. Il messaggio di default si presenta quando un oggetto/informazioni cercati non sono presenti nel dataset, altrimenti è possibile anche specificare cosa non è presente.
+ * @author Marco Esposito
  *
  */
 @SuppressWarnings("serial")

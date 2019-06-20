@@ -1,54 +1,23 @@
 package com.example.demo;
 
-import java.io.File;
-
-import Eccezioni.OperatorException;
-import Eccezioni.RESTErrorHandler;
-import Eccezioni.tooManyArguments;
-
-import org.springframework.boot.json.BasicJsonParser;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.validation.Valid;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import Utility.Parser;
+import Eccezioni.OperatorException;
+import Eccezioni.RESTErrorHandler;
+import Eccezioni.tooManyArguments;
 import Utility.scannerDati;
-import Utility.GPS;
-import Utility.Checker;
 import modelloDataSet.Farmacia;
-/** Rest Controller che si occupa delle richieste per la ricerca, il filtraggio e lo scorrimento dei dati. Utilizza un'istanza di scannerDati in tal senso.
+/** Rest Controller che si occupa delle richieste per la ricerca, il filtraggio e lo scorrimento dei dati. Utilizza un'istanza di scannerDati in tal senso, che gli viene iniettata automaticamente da Spring.
  * 
  * @author Marco Esposito
  */
@@ -61,15 +30,16 @@ public class DataController {
 	}
 	
 	/**
-	 * Filtro Generico per Oggetti Farmacia. Filtra i dati numerici (latitudine e longitudine) a seconda dell'operatore. Per le stringhe ritorna, se c'è una corrispondenza, l'uguaglianza fra il valore immesso e quello nel campo corrispondente indicato
+	 * Richiesta di filtraggio generica per oggetti Farmacia. Filtra i dati numerici a seconda dell'operatore. Per le stringhe ritorna, se c'è una corrispondenza, l'uguaglianza fra il valore immesso e quello nel campo corrispondente indicato.
 	 * Operatori definiti: 
 	 * = uguaglianza fra numeri o stringhe
 	 * > maggiore di
 	 * < minore di
-	 * @param fieldname
-	 * @param operator
-	 * @param value
-	 * @return
+	 * Utilizza il metodo {@link Utility.scannerDati#filterField}
+	 * @param fieldname - campo da filtrare
+	 * @param operator - operatore da utilizzare
+	 * @param value - valore con cui effettuare i confronti
+	 * @return  Collection - Collection contenente i risultati del filtraggio
 	 * @throws SecurityException 
 	 * @throws NoSuchFieldException 
 	 * @throws RESTErrorHandler 
@@ -83,8 +53,8 @@ public class DataController {
 	}
 	
 	/**Ritorna i metadati degli oggetti Farmacia
-	 * 
-	 * @return
+	 * Utilizza il metodo {@link Utility.scannerDati#getMetaFarmacia}
+	 * @return ArrayList<JSONObject> - ArrayList contenente i metadati in formato JSON
 	 * @throws ParseException
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
@@ -98,8 +68,8 @@ public class DataController {
 	}
 	
 	/**Ritorna i metadati degli oggetti Comune
-	 * 
-	 * @return
+	 * Utilizza il metodo {@link Utility.scannerDati#getMetaComune}
+	 * @return ArrayList<JSONObject> - ArrayList contenente i metadati in formato JSON
 	 * @throws ParseException
 	 * @throws NoSuchMethodException
 	 * @throws SecurityException
@@ -113,8 +83,8 @@ public class DataController {
 		}
 		
 		/**Ritorna i metadati degli oggetti Provincia
-		 * 
-		 * @return
+		 * Utilizza il metodo {@link Utility.scannerDati#getMetaProvincia}
+		 * @return ArrayList<JSONObject> - ArrayList contenente i metadati in formato JSON
 		 * @throws ParseException
 		 * @throws NoSuchMethodException
 		 * @throws SecurityException
@@ -128,10 +98,10 @@ public class DataController {
 		}
 		
 	
-	/**Cerca la Farmacia dato il nome
-	 * 
-	 * @param nome
-	 * @return
+	/**Cerca l'oggetto Farmacia dato il nome
+	 * Utilizza il metodo {@link Utility.scannerDati#cerca(String)}
+	 * @param String - nome della farmacia
+	 * @return Farmacia
 	 * @throws RESTErrorHandler
 	 */
 	@RequestMapping("/cerca")
@@ -141,10 +111,10 @@ public class DataController {
 	}
 	
 	/**Ritorna i dati della farmacia che si trova alle coordinate fornite
-	 * 
-	 * @param lat
-	 * @param longi
-	 * @return
+	 * Utilizza il metodo {@link Utility.scannerDati#cercaCoordinate(double, double)}
+	 * @param double - latitudine
+	 * @param double - longitudine
+	 * @return Farmacia
 	 * @throws RESTErrorHandler
 	 */
 	@RequestMapping("/coordinate")
@@ -154,10 +124,10 @@ public class DataController {
 		}
 	
 
-	/**Ritorna l'elenco in formato JSON delle farmacie in un determinato comune
-	 * 
-	 * @param Comune
-	 * @return
+	/**Ritorna l'elenco in formato JSON delle farmacie in un determinato comune (equivale ad un filtraggio del tipo http://localhost:8080/filtro?campo=comune&operatore===&valore=nomeComune, ma è riportato per semplicità).
+	 * Utilizza il metodo {@link Utility.scannerDati#cercaPerComune(String)}.
+	 * @param String - Comune
+	 * @return ArrayList<Farmacia> - Farmacie di quel Comune
 	 * @throws RESTErrorHandler
 	 */
 	@RequestMapping ("/comune")
@@ -166,10 +136,10 @@ public class DataController {
 		return scan.cercaPerComune(Comune);
 	}
 	
-	/**Ritorna l'elenco in formato JSON delle farmacie in una determinata provincia
-	 * {@link Utility.scannerDati.cercaPerProvincia}
-	 * @param Provincia
-	 * @return
+	/**Ritorna l'elenco in formato JSON delle farmacie in una determinata provincia (equivale ad un filtraggio del tipo http://localhost:8080/filtro?campo=provincia&operatore===&valore=nomeProvincia, ma è riportato per semplicità).
+	 * Utilizza il metodo {@link Utility.scannerDati#cercaPerProvincia(String)}.
+	 * String - Provincia
+	 * @return ArrayList<Farmacia> - Farmacie di quella Provincia
 	 * @throws RESTErrorHandler
 	 */
 	@RequestMapping("/provincia")
@@ -178,18 +148,18 @@ public class DataController {
 		return scan.cercaPerProvincia(Provincia);
 	}
 	
-	/** Ritorna l'elenco in formato JSON dei dispensari in un Comune, in una Provincia o nell'intero DataSet
-	 * 
-	 * @param Provincia
-	 * @param Comune
-	 * @return
+	/** Ritorna l'elenco in formato JSON dei dispensari in un Comune, in una Provincia o nell'intero DataSet.
+	 * Utilizza i metodi {@link Utility.scannerDati#getDispensariComune(String)}, {@link Utility.scannerDati#getDispensariProvincia(String)}, {@link Utility.scannerDati#getDispensari()}
+	 * @param String - Provincia
+	 * @param String - Comune
+	 * @return ArrayList<Farmacia> - Elenco dei dispensari
 	 * @throws RESTErrorHandler
 	 * @throws tooManyArguments 
 	 */
 	@RequestMapping("/dispensari")
 	public ArrayList<Farmacia> cercaDispensari(@RequestParam(value="provincia", defaultValue="") String Provincia, @RequestParam(value="comune", defaultValue="") String Comune) throws RESTErrorHandler, tooManyArguments {
 		
-		if(!Provincia.equals("") && !Comune.equals("")) throw new tooManyArguments();
+		if(!Provincia.equals("") && !Comune.equals("")) throw new tooManyArguments("Inserire solo un comune o una provincia o nessun argomento");
 		else if (!Provincia.equals("")) {
 		if (scan.cercaProvincia(Provincia)==null) throw new RESTErrorHandler("Provincia");
 		return scan.getDispensariProvincia(Provincia);
@@ -200,9 +170,26 @@ public class DataController {
 		}
 		else return scan.cercaDispensari();
 	}
-
 	
-}// fine
+	/**
+	 * Ritorna il risultato dell'operazione statistica richiesta indicata dal parametro operator, sul campo richiesto indicato dal parametro fieldname.
+	 * @param fieldname
+	 * @param operator
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws OperatorException
+	 * @throws RESTErrorHandler
+	 */
+	@RequestMapping ("/stat") 
+	public double stat (@RequestParam(value="campo") String fieldname, @RequestParam(value="operatore") String operator) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, OperatorException, RESTErrorHandler {
+		if ((!operator.equals("max")) && (!operator.equals("min")) && (!operator.equals("media")) && (!operator.equals("varianza"))) throw new OperatorException();
+		else if (scan.Statistiche(fieldname, operator)==0) throw new RESTErrorHandler("Campo");
+		else return scan.Statistiche(fieldname, operator);
+	}
+	
+}
 	
 	
 	

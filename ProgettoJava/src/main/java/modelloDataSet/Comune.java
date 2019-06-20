@@ -10,7 +10,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import Utility.MetaDataStore;
-
+/**
+ * Classe che modella un Comune. Ogni Comune contiene un riferimento a un oggetto Provincia, e inoltre estende Localita e implementa l'interfaccia MetaDati.
+ * @author Marco
+ * 
+ */
 public class Comune extends Localita implements MetaData{
 	
 	private Provincia provincia;
@@ -22,8 +26,8 @@ public class Comune extends Localita implements MetaData{
 		provincia=new Provincia();
 	}
 	
-	public Comune(double lat, double longi, String indirizzo) {
-		super(lat, longi, indirizzo);
+	public Comune(double lat, double longi, String indirizzo, String frazione) {
+		super(lat, longi, indirizzo, frazione);
 		provincia=new Provincia();
 	}
 	
@@ -52,12 +56,17 @@ public class Comune extends Localita implements MetaData{
 		this.nomeComune=nomeComune;
 	}
 	
+	/**
+	 * Implementa il metodo getMetaDati() dell'interfaccia MetaData. Se ritornasse semplicemente un ArrayList di JSONObject, Spring visualizzerebbe
+	 * i metadati ogni volta che viene ritornato un oggetto di tipo Comune. Per questo motivo si inseriscono i metadati in un oggetto {@link Utility.MetaDataStore}, da cui poi vi si può accedere facilmente con il metodo {@link Utility.MetaDataStore#getData()}.
+	 * @return  MetaDataStore - oggetto contenente i metadati
+	 */
 	 public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
 		String[] campi= {"CodiceComune", "NomeComune"};
 		Class<?> f = this.getClass();
 		ArrayList<JSONObject> temp=MetaData.creaMetaDati(f,campi);
-		temp.addAll(provincia.getMetaDati().getData());
-		temp.addAll(super.getMetaDati().getData());
+		temp.addAll(provincia.getMetaDati().getData()); //accedo ai metadati di provincia
+		temp.addAll(super.getMetaDati().getData()); //accedo ai metadati della superclasse
 		return new MetaDataStore(temp);
 	}
 

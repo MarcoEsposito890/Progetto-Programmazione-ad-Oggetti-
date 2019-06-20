@@ -24,14 +24,25 @@ public class GPSController{
 		}
 	
 	
-	//Trova la distanza fra due farmacie, dato il nome
+	/**Trova la distanza fra due farmacie, dato il nome. Utilizza il metodo di GPS {@link Utility.GPS#distanza(double, double, double, double)
+	 * 
+	 * @param String nome1 - nome della prima farmacia
+	 * @param String nome2 - nome della seconda farmacia
+	 * @return String - stringa in cui è riportata la distanza in km
+	 * @throws RESTErrorHandler
+	 */
 		@RequestMapping("/Distanza")
 		public String distanza(@RequestParam(value="nome1")String nome1, @RequestParam(value="nome2")String nome2) throws RESTErrorHandler {
 			if(gps.cerca(nome1)==null && gps.cerca(nome2)==null) throw new RESTErrorHandler();
 			return "Distanza in km: "+gps.distanza(nome1, nome2);
 		}
 	
-	//Trova la farmacia più vicina, dato il nome
+	/**Trova la farmacia più vicina, dato il nome. Utilizza il metodo di GPS {@link Utility.GPS#trovaVicina(java.util.ArrayList, java.util.ArrayList, double, double)}
+	 * 
+	 * @param String nome - nome della farmacia
+	 * @return Farmacia - farmacia più vicina
+	 * @throws RESTErrorHandler
+	 */
 		@RequestMapping("/PiuVicina")
 		public Farmacia piuVicina(@RequestParam(value="nome")String nome) throws RESTErrorHandler {
 			if(gps.cerca(nome)==null) throw new RESTErrorHandler("Farmacia");

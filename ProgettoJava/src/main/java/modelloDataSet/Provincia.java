@@ -7,7 +7,7 @@ import org.json.simple.parser.ParseException;
 
 import Utility.MetaDataStore;
 /**
- * Classe che contiene informazioni sulla provincia dove si trova una Farmacia (riga del dataset)
+ * Classe che contiene informazioni sulla provincia dove si trova una Farmacia e implementa l'interfaccia MetaDati.
  * @author Marco
  *
  */
@@ -44,6 +44,11 @@ public class Provincia implements MetaData{
 		this.nomeProvincia=nomeProvincia;
 	}
 	
+	/**
+	 * Implementa il metodo getMetaDati() dell'interfaccia MetaData. Se ritornasse semplicemente un ArrayList di JSONObject, Spring visualizzerebbe
+	 * i metadati ogni volta che viene ritornato un oggetto di tipo Provincia. Per questo motivo si inseriscono i metadati in un oggetto {@link Utility.MetaDataStore}, da cui poi vi si può accedere facilmente con il metodo {@link Utility.MetaDataStore#getData()}.
+	 * @return  MetaDataStore - oggetto contenente i metadati
+	 */
 	public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
 		String[] campi= {"CodiceProvincia", "NomeProvincia", "Sigla"};
 		Class<?> f = this.getClass();

@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Scanner;
 
 import org.json.simple.JSONArray;
@@ -28,11 +27,11 @@ public class Parser{
 	
 	/**
 	 * Metodo utilizzato per effettuare il parsing del file. In particolare, inizialmente salva l'header del file in un ArrayList; poi crea 
-	 * un ArrayList di HashMap<String, String>, in cui, per ogni riga (farmacia) nel dataset 
-	 * salva le coppie attributo-valore corrispondenti agli attributi dell'header e al loro corrispondente valore per ogni riga. Al termine del parsing, si ha quindi a disposizione l'ArrayList campi,
-	 * che contiene gli attributi dell'header, ed è accessibili con il metodo getter della classe Parser, e l'ArrayList dati, contentente un HashMap per ogni riga
+	 * un ArrayList di HashMap<String, String>, in cui, per ogni riga (farmacia) del dataset 
+	 * salva le coppie attributo-valore corrispondenti agli attributi dell'header e al loro corrispondente valore per quella riga. Al termine del parsing, si ha quindi a disposizione l'ArrayList campi,
+	 * che contiene gli attributi dell'header, ed è accessibili con il metodo getter della classe Parser, e l'ArrayList dati, contentente un HashMap<Attributo, Valore> per ogni riga
 	 * del file CSV, anch'essa accessibile con il corrispondente metodo getter.
-	 * @param filename - nome del file in formato CSV di cui fare il parsing
+	 * @param String filename - nome del file in formato CSV di cui fare il parsing
 	 */
 	public void parsingCSV(String filename) {
 		try {
@@ -45,7 +44,7 @@ public class Parser{
 				if(i!=columns.length-1) {
 				campi.add(columns[i]);
 				}
-				else campi.add("LONGITUDINE"); //altrimenti inserisce un carattere in più nell'ultimo campo 
+				else campi.add("LONGITUDINE"); //altrimenti legge un carattere in più nell'ultimo campo 
 			}
 			String temp="";
 			in.useDelimiter("\n|;");
@@ -76,14 +75,16 @@ public class Parser{
 	/**
 	 * Metodo che fa il parsing della stringa in formato JSON contenente il dataset-ID e cerca l'URL utile per scaricare il file, cercando quella che
 	 * porta ad un file CSV tra le URL disponibili nel dataset-ID.
-	 * @param data - Stringa contenente il dataset-ID in formato JSON (opportunamento scaricato all'avvio dell'applicazione {@link com.example.demo.ProgettoJavaApplication}
-	 * @return URL da cui scaricare il file CSV
+	 * @param String data - Stringa contenente il dataset-ID in formato JSON (opportunamento scaricato all'avvio dell'applicazione {@link com.example.demo.ProgettoJavaApplication}
+	 * @return String URL da cui scaricare il file CSV
 	 * @throws ParseException
 	 */
-	public String getURL(String data) throws ParseException { //RIVEDI QUESTO THROW
+	public String getURL(String data) { 
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj = new JSONObject();
-		Object obj = jsonParser.parse(data);
+		Object obj;
+		try {
+		obj = jsonParser.parse(data);
 		jsonObj = (JSONObject) obj;
 		JSONObject result = (JSONObject) jsonObj.get("result");
 		JSONArray resource = (JSONArray) result.get("resources");
@@ -92,6 +93,9 @@ public class Parser{
 			if(o1.get("format").equals("csv")) {
 				return (String) o1.get("url");
 			}	
+		}
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -106,9 +110,10 @@ public class Parser{
 		return campi;
 	}
 	
-	/**Ritorna l'ArrayList contente le HashMap rappresentanti ogni riga del file (che a loro volta contengono i dati corrispodenti a un campo dell'header)
+	
+	/**Ritorna l'ArrayList contente le HashMap rappresentanti ogni riga del file.
 	 * 
-	 * @return ArrayList<HashMap<String, String>> -- ArrayList contenente una HashMap per ogni riga del file, ognuna contente attributi e valori per quella riga
+	 * @return ArrayList<HashMap<String, String>> -- ArrayList contenente una HashMap per ogni riga del file, ognuna contente le coppie attributi/valori per quella riga
 	 */
 	public ArrayList<HashMap<String, String>> getDati(){
 		return dati;
@@ -129,7 +134,7 @@ public class Parser{
 		ArrayList<Provincia> province = new ArrayList<Provincia>();
 		String dummy="";
 		String dummy2="";
-		for(int i=0; i<dati.size()-1; i++) { //rivedi qui dati.size()-1 + ECCEZIONE SE DATI è VUOTO!
+		for(int i=0; i<dati.size()-1; i++) { 
 			Farmacia temp = new Farmacia();
 			
 			//Seguendo lo schema di incapsulamento dei dati, creo prima un oggetto Provincia, che andrà inserito poi nell'oggetto Comune. Aggiungo un controllo per non avere oggetti Provincia duplicati (più comuni possono fare riferimento allo stesso oggetto Provincia)
@@ -142,13 +147,15 @@ public class Parser{
 			if (province.contains(p)) p=province.get(province.indexOf(p));
 			else province.add(p);
 			
-			//Si crea un oggetto Comune, il quale estende la classe Localita (quindi estraiamo prima dai dati i costruttori della superclasse). Come sopra, controllo prima di non averne creato uno uguale
+			//Si crea un oggetto Comune, il quale estende la classe Localita (quindi estraiamo prima dai dati i costruttori della superclasse). Come sopra, controllo prima di non averne creato uno uguale (più farmacie possono fare riferimento allo stesso oggetto Comune)
 			dummy= dati.get(i).get("LATITUDINE").replace(',', '.');
-			if(dummy.contains("-")) dummy = "0";
+			if(dummy.contains("-")) dummy = "0"; //il simbolo "-" è usato nel dataset quando un campo è vuoto. Visto che i campi numerici sono di tipo int/double, quando si incontra "-" si mette a 0 quel campo.
 			dummy2=dati.get(i).get("LONGITUDINE").replace(',', '.');
 			if(dummy2.contains("-")) dummy2 = "0";
 			String indirizzo= dati.get(i).get("INDIRIZZO");
-			Comune c = new Comune(Double.parseDouble(dummy), Double.parseDouble(dummy2), indirizzo);
+			String frazione = dati.get(i).get("FRAZIONE");
+			if(frazione.equals("-")) frazione = "Nessuna";
+			Comune c = new Comune(Double.parseDouble(dummy), Double.parseDouble(dummy2), indirizzo, frazione);
 			c.setProvincia(p);
 			c.setCodice(Integer.parseInt(dati.get(i).get("CODICE COMUNE ISTAT")));
 			c.setDescrizione(dati.get(i).get("DESCRIZIONE COMUNE"));
@@ -162,19 +169,14 @@ public class Parser{
 			temp.setTipologia(dati.get(i).get("DESCRIZIONE TIPOLOGIA"));
 			Double IVA;
 			try {
-			IVA=Double.parseDouble(dati.get(i).get("PARTITA IVA"));
+			IVA=Double.parseDouble(dati.get(i).get("PARTITA IVA")); 
 			} catch(NumberFormatException e) {
 				IVA=0.0;
 			}
 			temp.setIVA(((Double) IVA).intValue());
-			System.out.println(((Double) IVA).intValue());
 			temp.setComune(c);
 			farmacie.add(temp);
 		
-			/*catch(NumberFormatException e) {
-				if(dummy.contains("-")) dummy = "0"; //inserisco zero dove non c'è un valore disponibile per il campo
-				if(dummy2.contains("-")) dummy2 = "0"; //idem (ho bisogno di fare il controllo su 2 stringhe perchè devo mantenere sia i valori di latitudine che di longitudine prima di creare Comune). 
-			}*/
 		}
 		return farmacie;
 	}

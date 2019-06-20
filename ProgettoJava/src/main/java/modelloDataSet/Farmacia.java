@@ -3,7 +3,6 @@ package modelloDataSet;
 import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import Utility.MetaDataStore;
@@ -83,17 +82,16 @@ public class Farmacia implements MetaData{
 	
 /**
  * Implementa il metodo getMetaDati() dell'interfaccia MetaData. Se ritornasse semplicemente un ArrayList di JSONObject, Spring visualizzerebbe
- * i metadati ogni volta che viene ritornato un oggetto di tipo Farmacia. Per questo motivo si inseriscono i metadati in un oggetto MetaDataStore.
+ * i metadati ogni volta che viene ritornato un oggetto di tipo Farmacia. Per questo motivo si inseriscono i metadati in un oggetto {@link Utility.MetaDataStore}, da cui poi vi si può accedere facilmente con il metodo {@link Utility.MetaDataStore#getData()}.
  * @return 
  */
 	
 		public MetaDataStore getMetaDati() throws NoSuchMethodException, SecurityException, ParseException {
-		JSONParser parser = new JSONParser();
 		ArrayList<JSONObject> temp = new ArrayList<JSONObject>();
 		Class<?> f = this.getClass();
 		String[] campi= {"Descrizione", "Tipologia", "CodiceTipologia", "PartitaIVA", "CodiceID"};
 		temp=MetaData.creaMetaDati(f,campi);
-		temp.addAll(c.getMetaDati().getData());
+		temp.addAll(c.getMetaDati().getData()); //accedo ai metadati di comune
 		return new MetaDataStore(temp);
 	}
 

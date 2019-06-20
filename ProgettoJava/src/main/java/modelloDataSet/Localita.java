@@ -7,7 +7,7 @@ import org.json.simple.parser.ParseException;
 
 import Utility.MetaDataStore;
 /**
- * Classe che contiene coordinate ed indirizzo di una Farmacia (riga del dataset)
+ * Classe che rappresenta una Localita e contiene quindi informazioni su latitudine, longitudine e indirizzo. Implementa l'interfaccia MetaDati.
  * @author Marco
  *
  */
@@ -16,6 +16,7 @@ public class Localita implements MetaData{
 	private double latitudine;
 	private double longitudine;
 	private String indirizzo;
+	private String frazione;
 
 	//private Comune comune;
 	
@@ -27,10 +28,11 @@ public class Localita implements MetaData{
 		
 	}
 	
-	public Localita(double latitudine, double longitudine, String indirizzo) {
+	public Localita(double latitudine, double longitudine, String indirizzo, String frazione) {
 		this.latitudine=latitudine;
 		this.longitudine=longitudine;
 		this.indirizzo=indirizzo;
+		this.frazione=frazione;
 	}
 	
 	@metadati(alias="latitudine", sourcefield="LATITUDINE", type="double")
@@ -48,6 +50,11 @@ public class Localita implements MetaData{
 		return indirizzo;
 	}
 	
+	@metadati(alias="frazione", sourcefield="FRAZIONE", type="String")
+	public String getFrazione() {
+		return frazione;
+	}
+	
 	public void setLat(double latitudine) {
 		this.latitudine=latitudine;
 	}
@@ -56,9 +63,13 @@ public class Localita implements MetaData{
 		this.longitudine=longitudine;
 	}
 	
-	
+	/**
+	 * Implementa il metodo getMetaDati() dell'interfaccia MetaData. Se ritornasse semplicemente un ArrayList di JSONObject, Spring visualizzerebbe
+	 * i metadati ogni volta che viene ritornato un oggetto di tipo Localita. Per questo motivo si inseriscono i metadati in un oggetto {@link Utility.MetaDataStore}, da cui poi vi si può accedere facilmente con il metodo {@link Utility.MetaDataStore#getData()}.
+	 * @return  MetaDataStore - oggetto contenente i metadati
+	 */
 	public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
-		String[] campi= {"Latitudine", "Longitudine", "Indirizzo"};
+		String[] campi= {"Latitudine", "Longitudine", "Indirizzo", "Frazione"};
 		Class<?> f = this.getClass();
 		ArrayList<JSONObject> temp=MetaData.creaMetaDati(f,campi);
 		return new MetaDataStore(temp);

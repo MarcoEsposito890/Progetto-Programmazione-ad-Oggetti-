@@ -34,12 +34,12 @@ import modelloDataSet.Farmacia;
 public class ProgettoJavaApplication {
 	static ArrayList<Farmacia> Farmacie;
 	/**
-	 *  *Applicazione che, all'avvio, effettua il  download del data-set che contiene dati in formato CSV
- *partendo dall’indirizzo fornito, dopo opportuna decodifica del JSON che contiene la URL
- *utile per scaricare il file. Per effetuare le operazioni di Parsing viene utilizzata la classe {@link Utility.Parser}, che effettua
- *sia il parsing del JSON che del file CSV, inserendo inoltre i dati ottenuti dal parsing negli appositi
+	 *  *Applicazione che, all'avvio, effettua il  download del data-set che contiene i dati in formato CSV
+ *partendo dall’indirizzo fornito, dopo opportuna decodifica del data-set ID (formato JSON) che contiene appunto l'indirizzo. 
+ *Per effetuare le operazioni di Parsing viene utilizzata la classe {@link Utility.Parser}, che effettua
+ *sia il parsing del JSON che del file .csv, usando inoltre i dati ottenuti dal parsing per creare gli
  *oggetti che modellano il dataset. Una volta ricavati questi ultimi, si crea un'ArrayList contenente gli oggetti di
- *tipo Farmacia (rappresentanti una riga del file .csv) che viene iniettato all'avvio di Spring nei Rest Controller.
+ *tipo Farmacia (rappresentanti una riga del file .csv) che viene usato per creare le classi di {@link Utility} che vengono iniettate all'avvio di Spring nei Rest Controller.
 	 * @param args
 	 * @throws ParseException
 	 * @throws IOException
@@ -47,8 +47,9 @@ public class ProgettoJavaApplication {
 	public static void main(String[] args) throws ParseException, IOException {
 		
 		Parser pars = new Parser();
-		//eseguo il parsing del dataset-ID/download dei file csv
-		//prima di tutto salvo il dataset-ID all'interno della variabile String data, copiando il contenuto dell'url assegnato
+		//eseguo il parsing del data-set ID e il download dei file csv
+		
+		//prima di tutto salvo il data-set ID all'interno della variabile String data, copiando il contenuto dall'url assegnato
 		String url = "https://www.dati.gov.it/api/3/action/package_show?id=46fd5cc3-300a-45ae-89de-98e24919e2d3";
 		URLConnection openConnection;
 		String data="";
@@ -78,7 +79,7 @@ public class ProgettoJavaApplication {
 		}
 		
 		//ora data contiene il dataset-ID, dal quale devo ricavare l'URL al quale si trova il file csv assegnato. Utilizzo il metodo getUrl della classe Parser
-		//per fare il parsing di data (contiene un oggetto in formato JSON) e ricavare appunto l'url
+		//per fare il parsing di data (stringa che contiene un oggetto in formato JSON) e ricavare appunto l'url
 		try {
 			url = pars.getURL(data);
 			System.out.println("URL DataSet: '"+url+"'");
@@ -94,21 +95,22 @@ public class ProgettoJavaApplication {
 		catch (IOException e) {
 			System.out.println("I/O Exception: " + e.getMessage());
 		} 
-		//avvio l'applicazione Spring. All'avvio, al RestController viene iniettata automaticamente un'istanza di Parser, che sarà utilizzata dalla classe
-		//scannerDati all'interno di Controller per ricavare/elaborare i dati (opportunamente inseriti da Parser negli oggetti utilizzati per modellare il dataset).
+		finally {
+			if(in!=null) in.close();
+		}
 		
-	
+		//eseguo il parsing del file .csv e creo gli oggetti che modellano il data-set
 		pars.parsingCSV("Elenco-Farmacie.csv");
 		Farmacie=pars.getFarmacie();
 		
+		//avvio l'applicazione Spring. All'avvio, ai RestController viene iniettata automaticamente un'istanza dei Bean definiti sotto, che saranno utilizzati
+		//per ricavare/elaborare i dati (già inseriti da Parser negli oggetti creati per modellare il dataset).
 		
 		SpringApplication.run(ProgettoJavaApplication.class, args);
 	}
-
-	/**
-	 * Inizializzazione del Bean di tipo Farmacia iniettato nei Rest Controller all'avvio di Spring
-	 * @return  ArrayList<Farmacia>
-	 */
+	
+	//in seguito l'inizializzazione dei Bean usati dai Rest Controller
+	
 	@Bean
 	public ArrayList<Farmacia> farmacie(){
 		return Farmacie;

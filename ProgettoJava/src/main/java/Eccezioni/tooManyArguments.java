@@ -1,7 +1,11 @@
 package Eccezioni;
-
+/**
+ * Classe che gestisce eccezioni riguarda il passaggio di troppi parametri ad una richiesta GET.
+ * @author Marco Esposito
+ *
+ */
 public class tooManyArguments extends Exception{
-	public tooManyArguments () {
-		super("Troppi Argomenti! Inserire solo un comune o una provincia o nessun argomento");
+	public tooManyArguments (String s) {
+		super("Troppi Argomenti!"+s);
 	}
 }
