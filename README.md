@@ -22,7 +22,7 @@ Sono quindi previste diverse richieste che consentono principalmente la visualiz
 
 ## Modello del Dataset
 
-![modello](https://user-images.githubusercontent.com/48209182/59905710-32d4ce80-9407-11e9-8293-ad18bca578f5.png)
+![modello (6)](https://user-images.githubusercontent.com/48209182/59911381-0a070600-9414-11e9-864f-6c853d0c4ca9.png)
 
 Come già detto, il data-set assegnato rappresenta le Farmacie della regione Campania. Il modello usato quindi rappresenta ogni Farmacia (una riga del file "Elenco-Farmacie.csv") come un oggetto omonimo contenente gli attributi riportati nel dataset come nome, partita IVA, tipologia etc. Ogni Farmacia contiene inoltre un riferimento ad un oggetto Comune, che rappresenta appunto il comune in cui si trova la Farmacia. La classe Comune estende la classe Localita, contenente informazioni sulla latitudine e la longitudine. Infine, ogni oggetto
 Comune contiene un riferimento a un oggetto Provincia, che indica appunto la provincia in cui si trova il comune.
