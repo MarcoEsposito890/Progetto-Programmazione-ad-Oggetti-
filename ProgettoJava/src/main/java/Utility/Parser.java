@@ -16,15 +16,15 @@ import modelloDataSet.Comune;
 import modelloDataSet.Farmacia;
 import modelloDataSet.Provincia;
 /** La classe Parser contiene metodi utili per eseguire il parsing del dataset-ID fornito (in formato JSON) e del file csv assegnato.
-*	In particolare, viene utilizzata all'avvio dell'applicazione per ricavare l'URL per scaricare il file CSV e poi per effettuare il
-*	parsing di quest'ultimo. Si occupa inoltre di creare gli oggetti che modellano il dataset, utilizzando i dati provenienti dal parsing.
-*/
+ *	In particolare, viene utilizzata all'avvio dell'applicazione per ricavare l'URL per scaricare il file CSV e poi per effettuare il
+ *	parsing di quest'ultimo. Si occupa inoltre di creare gli oggetti che modellano il dataset, utilizzando i dati provenienti dal parsing.
+ */
 public class Parser{
-	
+
 	private ArrayList<String> campi= new ArrayList<String>();
 	private ArrayList<HashMap<String, String>> dati = new ArrayList<HashMap<String, String>>();
 	//esegue il parsing del file csv
-	
+
 	/**
 	 * Metodo utilizzato per effettuare il parsing del file. In particolare, inizialmente salva l'header del file in un ArrayList; poi crea 
 	 * un ArrayList di HashMap<String, String>, in cui, per ogni riga (farmacia) del dataset 
@@ -38,11 +38,11 @@ public class Parser{
 			Scanner in =  new Scanner(new BufferedInputStream (new FileInputStream (filename))).useDelimiter("\n");
 			//salvo l'header del file csv (contente i campi della tabella) nell'ArrayList campi
 			String header = "";
-	        header=in.next();
+			header=in.next();
 			String[] columns = header.split(";");
 			for(int i=0; i<columns.length; i++) {
 				if(i!=columns.length-1) {
-				campi.add(columns[i]);
+					campi.add(columns[i]);
 				}
 				else campi.add("LONGITUDINE"); //altrimenti legge un carattere in più nell'ultimo campo 
 			}
@@ -65,12 +65,12 @@ public class Parser{
 				dati.add(mappa);
 				counter++;
 			}
-		System.out.println("Numero righe file: "+counter);	
-		in.close();
+			System.out.println("Numero righe file: "+counter);	
+			in.close();
 		}
 		catch (IOException e) {
-	        System.out.println("I/O Error: " + e.getMessage());
-			}
+			System.out.println("I/O Error: " + e.getMessage());
+		}
 	}
 	/**
 	 * Metodo che fa il parsing della stringa in formato JSON contenente il dataset-ID e cerca l'URL utile per scaricare il file, cercando quella che
@@ -84,22 +84,22 @@ public class Parser{
 		JSONObject jsonObj = new JSONObject();
 		Object obj;
 		try {
-		obj = jsonParser.parse(data);
-		jsonObj = (JSONObject) obj;
-		JSONObject result = (JSONObject) jsonObj.get("result");
-		JSONArray resource = (JSONArray) result.get("resources");
-		for(Object o : resource) {
-			JSONObject o1 = (JSONObject) o;
-			if(o1.get("format").equals("csv")) {
-				return (String) o1.get("url");
-			}	
-		}
+			obj = jsonParser.parse(data);
+			jsonObj = (JSONObject) obj;
+			JSONObject result = (JSONObject) jsonObj.get("result");
+			JSONArray resource = (JSONArray) result.get("resources");
+			for(Object o : resource) {
+				JSONObject o1 = (JSONObject) o;
+				if(o1.get("format").equals("csv")) {
+					return (String) o1.get("url");
+				}	
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	/**Ritorna l'ArrayList contente i campi dell'header del file
 	 * 
 	 * @return ArrayList<String> - Lista degli header del file csv
@@ -109,8 +109,8 @@ public class Parser{
 		System.out.println("Numero campi header: "+campi.size());
 		return campi;
 	}
-	
-	
+
+
 	/**Ritorna l'ArrayList contente le HashMap rappresentanti ogni riga del file.
 	 * 
 	 * @return ArrayList<HashMap<String, String>> -- ArrayList contenente una HashMap per ogni riga del file, ognuna contente le coppie attributi/valori per quella riga
@@ -118,8 +118,8 @@ public class Parser{
 	public ArrayList<HashMap<String, String>> getDati(){
 		return dati;
 	}
-	
-	
+
+
 	/**
 	 * A partire dall'ArrayList dati presente nella classe (da riempire tramite il metodo ParsingCSV),
 	 * crea un ArrayList di oggetti Farmacia, organizzando i dati nelle classi opportune (vedere diagrammi UML) ed effettuando le opportune conversioni se necessario
@@ -127,7 +127,6 @@ public class Parser{
 	 * @return ritorna un ArrayList<Farmacia>
 	 * @throws NumberFormatException -- Controlla che tutti i campi siano convertibili in valori numerici e gestisce i campi vuoti
 	 */
-	//crea un ArrayList di oggetti Farmacia, organizzando i dati nelle classi opportune (vedere diagrammi UML) ed effettuando le opportune conversioni se necessario
 	public ArrayList<Farmacia> getFarmacie(){
 		ArrayList<Farmacia> farmacie = new ArrayList<Farmacia>(); 
 		ArrayList<Comune> comuni = new ArrayList<Comune>();
@@ -136,7 +135,7 @@ public class Parser{
 		String dummy2="";
 		for(int i=0; i<dati.size()-1; i++) { 
 			Farmacia temp = new Farmacia();
-			
+
 			//Seguendo lo schema di incapsulamento dei dati, creo prima un oggetto Provincia, che andrà inserito poi nell'oggetto Comune. Aggiungo un controllo per non avere oggetti Provincia duplicati (più comuni possono fare riferimento allo stesso oggetto Provincia)
 			Provincia p = new Provincia();
 			p = new Provincia();
@@ -146,7 +145,7 @@ public class Parser{
 			p.setSigla(dati.get(i).get("SIGLA PROVINCIA")); 
 			if (province.contains(p)) p=province.get(province.indexOf(p));
 			else province.add(p);
-			
+
 			//Si crea un oggetto Comune, il quale estende la classe Localita (quindi estraiamo prima dai dati i costruttori della superclasse). Come sopra, controllo prima di non averne creato uno uguale (più farmacie possono fare riferimento allo stesso oggetto Comune)
 			dummy= dati.get(i).get("LATITUDINE").replace(',', '.');
 			if(dummy.contains("-")) dummy = "0"; //il simbolo "-" è usato nel dataset quando un campo è vuoto. Visto che i campi numerici sono di tipo int/double, quando si incontra "-" si mette a 0 quel campo.
@@ -161,22 +160,22 @@ public class Parser{
 			c.setDescrizione(dati.get(i).get("DESCRIZIONE COMUNE"));
 			if (comuni.contains(c)) c=comuni.get(comuni.indexOf(p));
 			else comuni.add(c);
-			
-			//Infine si popola l'oggetto Farmacia, passandogli il riferimento all'oggetto Comune creato prima oltre i dati prelevati dal DataSet
+
+			//Infine si popola l'oggetto Farmacia, passandogli il riferimento all'oggetto Comune creato prima oltre gli altri dati prelevati dal DataSet
 			temp.setCodiceTipologia(Integer.parseInt(dati.get(i).get("CODICE TIPOLOGIA")));
 			temp.setDescrizione(dati.get(i).get("DESCRIZIONE FARMACIA"));
 			temp.setID(Integer.parseInt(dati.get(i).get("CODICE IDENTIFICATIVO FARMACIA")));
 			temp.setTipologia(dati.get(i).get("DESCRIZIONE TIPOLOGIA"));
 			Double IVA;
 			try {
-			IVA=Double.parseDouble(dati.get(i).get("PARTITA IVA")); 
+				IVA=Double.parseDouble(dati.get(i).get("PARTITA IVA")); 
 			} catch(NumberFormatException e) {
 				IVA=0.0;
 			}
 			temp.setIVA(((Double) IVA).intValue());
 			temp.setComune(c);
 			farmacie.add(temp);
-		
+
 		}
 		return farmacie;
 	}

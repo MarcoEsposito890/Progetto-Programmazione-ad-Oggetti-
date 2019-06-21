@@ -23,12 +23,12 @@ import modelloDataSet.Farmacia;
  */
 @RestController
 public class DataController {
-	 scannerDati scan; 
-	 
+	scannerDati scan; 
+
 	@Autowired public DataController(@Qualifier("scanner")scannerDati scan) {
 		this.scan=scan;
 	}
-	
+
 	/**
 	 * Richiesta di filtraggio generica per oggetti Farmacia. Filtra i dati numerici a seconda dell'operatore. Per le stringhe ritorna, se c'è una corrispondenza, l'uguaglianza fra il valore immesso e quello nel campo corrispondente indicato.
 	 * Operatori definiti: 
@@ -51,7 +51,16 @@ public class DataController {
 		if(scan.filterField(fieldname, operator, value)==null) throw new RESTErrorHandler("Attributo");
 		else return scan.filterField(fieldname, operator, value);
 	}
-	
+
+	/**
+	 * Ritorna tutti i dati (organizzati in oggetti Farmacia).
+	 * @return ArrayList<Farmacia> - ArrayList contenente tutti gli oggetti Farmacia
+	 */
+	@RequestMapping ("/dati")
+	public ArrayList<Farmacia> getDati(){
+		return scan.getDati();
+	}
+
 	/**Ritorna i metadati degli oggetti Farmacia
 	 * Utilizza il metodo {@link Utility.scannerDati#getMetaFarmacia}
 	 * @return ArrayList<JSONObject> - ArrayList contenente i metadati in formato JSON
@@ -66,7 +75,7 @@ public class DataController {
 	public ArrayList<JSONObject> getMetaFarmacia() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		return scan.getMetaFarmacia();
 	}
-	
+
 	/**Ritorna i metadati degli oggetti Comune
 	 * Utilizza il metodo {@link Utility.scannerDati#getMetaComune}
 	 * @return ArrayList<JSONObject> - ArrayList contenente i metadati in formato JSON
@@ -77,27 +86,27 @@ public class DataController {
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-		@RequestMapping("/metaC")
-		public ArrayList<JSONObject> getMetaComune() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
-			return scan.getMetaComune();
-		}
-		
-		/**Ritorna i metadati degli oggetti Provincia
-		 * Utilizza il metodo {@link Utility.scannerDati#getMetaProvincia}
-		 * @return ArrayList<JSONObject> - ArrayList contenente i metadati in formato JSON
-		 * @throws ParseException
-		 * @throws NoSuchMethodException
-		 * @throws SecurityException
-		 * @throws IllegalAccessException
-		 * @throws IllegalArgumentException
-		 * @throws InvocationTargetException
-		 */
-		@RequestMapping("/metaP")
-		public ArrayList<JSONObject> getMetaProvincia() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
-			return scan.getMetaProvincia();
-		}
-		
-	
+	@RequestMapping("/metaC")
+	public ArrayList<JSONObject> getMetaComune() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		return scan.getMetaComune();
+	}
+
+	/**Ritorna i metadati degli oggetti Provincia
+	 * Utilizza il metodo {@link Utility.scannerDati#getMetaProvincia}
+	 * @return ArrayList<JSONObject> - ArrayList contenente i metadati in formato JSON
+	 * @throws ParseException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	@RequestMapping("/metaP")
+	public ArrayList<JSONObject> getMetaProvincia() throws ParseException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		return scan.getMetaProvincia();
+	}
+
+
 	/**Cerca l'oggetto Farmacia dato il nome
 	 * Utilizza il metodo {@link Utility.scannerDati#cerca(String)}
 	 * @param String - nome della farmacia
@@ -109,7 +118,7 @@ public class DataController {
 		if(scan.cerca(nome)==null) throw new RESTErrorHandler(nome);
 		return scan.cerca(nome);
 	}
-	
+
 	/**Ritorna i dati della farmacia che si trova alle coordinate fornite
 	 * Utilizza il metodo {@link Utility.scannerDati#cercaCoordinate(double, double)}
 	 * @param double - latitudine
@@ -121,8 +130,8 @@ public class DataController {
 	public Farmacia cercaCoordinate(@RequestParam(value="lat")double lat, @RequestParam(value="long")double longi) throws RESTErrorHandler{
 		if(scan.cercaCoordinate(lat, longi)==null) throw new RESTErrorHandler();
 		return scan.cercaCoordinate(lat, longi);
-		}
-	
+	}
+
 
 	/**Ritorna l'elenco in formato JSON delle farmacie in un determinato comune (equivale ad un filtraggio del tipo http://localhost:8080/filtro?campo=comune&operatore===&valore=nomeComune, ma è riportato per semplicità).
 	 * Utilizza il metodo {@link Utility.scannerDati#cercaPerComune(String)}.
@@ -135,7 +144,7 @@ public class DataController {
 		if (scan.cercaComune(Comune)==null) throw new RESTErrorHandler("Comune");
 		return scan.cercaPerComune(Comune);
 	}
-	
+
 	/**Ritorna l'elenco in formato JSON delle farmacie in una determinata provincia (equivale ad un filtraggio del tipo http://localhost:8080/filtro?campo=provincia&operatore===&valore=nomeProvincia, ma è riportato per semplicità).
 	 * Utilizza il metodo {@link Utility.scannerDati#cercaPerProvincia(String)}.
 	 * String - Provincia
@@ -147,7 +156,7 @@ public class DataController {
 		if (scan.cercaProvincia(Provincia)==null) throw new RESTErrorHandler("Provincia");
 		return scan.cercaPerProvincia(Provincia);
 	}
-	
+
 	/** Ritorna l'elenco in formato JSON dei dispensari in un Comune, in una Provincia o nell'intero DataSet.
 	 * Utilizza i metodi {@link Utility.scannerDati#getDispensariComune(String)}, {@link Utility.scannerDati#getDispensariProvincia(String)}, {@link Utility.scannerDati#getDispensari()}
 	 * @param String - Provincia
@@ -158,11 +167,11 @@ public class DataController {
 	 */
 	@RequestMapping("/dispensari")
 	public ArrayList<Farmacia> cercaDispensari(@RequestParam(value="provincia", defaultValue="") String Provincia, @RequestParam(value="comune", defaultValue="") String Comune) throws RESTErrorHandler, tooManyArguments {
-		
+
 		if(!Provincia.equals("") && !Comune.equals("")) throw new tooManyArguments("Inserire solo un comune o una provincia o nessun argomento");
 		else if (!Provincia.equals("")) {
-		if (scan.cercaProvincia(Provincia)==null) throw new RESTErrorHandler("Provincia");
-		return scan.getDispensariProvincia(Provincia);
+			if (scan.cercaProvincia(Provincia)==null) throw new RESTErrorHandler("Provincia");
+			return scan.getDispensariProvincia(Provincia);
 		}
 		else if (!Comune.equals("")) {
 			if (scan.cercaComune(Comune)==null) throw new RESTErrorHandler("Comune");
@@ -170,7 +179,7 @@ public class DataController {
 		}
 		else return scan.cercaDispensari();
 	}
-	
+
 	/**
 	 * Ritorna il risultato dell'operazione statistica richiesta indicata dal parametro operator, sul campo richiesto indicato dal parametro fieldname.
 	 * @param fieldname
@@ -188,9 +197,9 @@ public class DataController {
 		else if (scan.Statistiche(fieldname, operator)==0) throw new RESTErrorHandler("Campo");
 		else return scan.Statistiche(fieldname, operator);
 	}
-	
+
 }
-	
-	
-	
+
+
+
 

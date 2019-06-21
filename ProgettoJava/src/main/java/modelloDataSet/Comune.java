@@ -16,21 +16,21 @@ import Utility.MetaDataStore;
  * 
  */
 public class Comune extends Localita implements MetaData{
-	
+
 	private Provincia provincia;
 	private int codiceComune;
 	private String nomeComune;
-	
+
 	public Comune() {
 		super();
 		provincia=new Provincia();
 	}
-	
+
 	public Comune(double lat, double longi, String indirizzo, String frazione) {
 		super(lat, longi, indirizzo, frazione);
 		provincia=new Provincia();
 	}
-	
+
 	public Provincia getProvincia() {
 		return provincia;
 	}
@@ -38,16 +38,16 @@ public class Comune extends Localita implements MetaData{
 	public int getCodiceComune() {
 		return codiceComune;
 	}
-	
+
 	@metadati(alias="NomeComune", sourcefield="DESCRIZIONE COMUNE", type="String")
 	public String getNomeComune() {
 		return nomeComune;
 	}
-	
+
 	public void setProvincia(Provincia provincia) {
 		this.provincia=provincia;
 	}
-	
+
 	public void setCodice(int codiceComune) {
 		this.codiceComune=codiceComune; 
 	}
@@ -55,13 +55,13 @@ public class Comune extends Localita implements MetaData{
 	public void setDescrizione(String nomeComune) {
 		this.nomeComune=nomeComune;
 	}
-	
+
 	/**
 	 * Implementa il metodo getMetaDati() dell'interfaccia MetaData. Se ritornasse semplicemente un ArrayList di JSONObject, Spring visualizzerebbe
 	 * i metadati ogni volta che viene ritornato un oggetto di tipo Comune. Per questo motivo si inseriscono i metadati in un oggetto {@link Utility.MetaDataStore}, da cui poi vi si può accedere facilmente con il metodo {@link Utility.MetaDataStore#getData()}.
 	 * @return  MetaDataStore - oggetto contenente i metadati
 	 */
-	 public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
+	public MetaDataStore getMetaDati() throws ParseException, NoSuchMethodException, SecurityException {
 		String[] campi= {"CodiceComune", "NomeComune"};
 		Class<?> f = this.getClass();
 		ArrayList<JSONObject> temp=MetaData.creaMetaDati(f,campi);

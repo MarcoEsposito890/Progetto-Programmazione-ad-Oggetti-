@@ -6,11 +6,11 @@ package Eccezioni;
  */
 @SuppressWarnings("serial")
 public class RESTErrorHandler extends Exception{
-	
+
 	public RESTErrorHandler(String nome){
 		super(""+nome+" non presente nel dataset!");
 	}
-	
+
 	public RESTErrorHandler(){
 		super("Non presente nel dataset!");
 	}

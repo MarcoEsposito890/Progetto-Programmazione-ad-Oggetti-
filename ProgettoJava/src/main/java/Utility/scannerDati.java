@@ -15,7 +15,7 @@ import modelloDataSet.Farmacia;
 import modelloDataSet.MetaData;
 import modelloDataSet.Provincia;
 /**Classe che si occupa di cercare e scorrere i dati in un ArrayList contente oggetti di tipo Farmacia. Viene utilizzata in particolare dai Controller per elaborare i dati
- * e ritornare i risultati delle elaborazioni, assieme alle classi che la estendono, {@link Utility.GPS} e  {@link Utility.Checker}
+ * e ritornare i risultati delle elaborazioni. Le classi che la estendono, {@link Utility.GPS} e  {@link Utility.Checker}
  * 
  * @author Marco Esposito
  */
@@ -28,9 +28,9 @@ public class scannerDati implements Filter{
 	public scannerDati(ArrayList<Farmacia> f) {
 		this.f = f;
 	}
-	
+
 	/** Filtraggio generico e implementazione del metodo {@link Utility.Filter.Filter#filterField(String, String, Object)}. Si crea un'istanza di {@link Utility.Filter.FilterUtils}, poi si verifica a quale classe appartiene il campo indicato dal parametro fieldName
-     * e si richiama il metodo adeguato di filterUtilis di conseguenza.
+	 * e si richiama il metodo adeguato di filterUtilis di conseguenza.
 	 * @param fieldname - campo da filtrare
 	 * @param operator - operatore da utilizzare
 	 * @param value - valore con cui effettuare i confronti
@@ -49,12 +49,12 @@ public class scannerDati implements Filter{
 		try {
 			Comune.class.getDeclaredField(fieldName);
 			has=true;
-			
+
 		}
-			catch(NoSuchFieldException e1) {
-				has=false;
-			}
-		
+		catch(NoSuchFieldException e1) {
+			has=false;
+		}
+
 		try {
 			Comune.class.getSuperclass().getDeclaredField(fieldName);
 			has=true;
@@ -62,23 +62,23 @@ public class scannerDati implements Filter{
 		catch(NoSuchFieldException e1) {
 			has=false;
 		}
-		
+
 		try {
 			Provincia.class.getDeclaredField(fieldName);
 			has2=true;
 		}
-			catch(NoSuchFieldException e1) {
-				has2=false;
-			}
-		
+		catch(NoSuchFieldException e1) {
+			has2=false;
+		}
+
 		try {
 			Farmacia.class.getDeclaredField(fieldName);
 			has3=true;
 		}
-			catch(NoSuchFieldException e1) {
-				has3=false;
-			}
-		
+		catch(NoSuchFieldException e1) {
+			has3=false;
+		}
+
 		if(has) { //il filtraggio è fatto su un membro di Comune (o Localita)
 			String classe = "comune";
 			return utils.select(f, fieldName, operator, value, classe, null, false);
@@ -92,7 +92,7 @@ public class scannerDati implements Filter{
 		}
 		else return null;
 	}
-	
+
 	/**Classe utilizzata per calcolare statistiche sui dati del data-set. Poichè gran parte dei campi sono di tipo String, si sono selezionati solo alcuni campi, come riportato nel metodo,
 	 * fra quelli validi (escludendo tra i campi numerici altri codici identificativi).
 	 * Sono implementati max, min, media, varianza.
@@ -110,42 +110,41 @@ public class scannerDati implements Filter{
 		boolean has=false;
 		boolean has2=false;
 		//i try-catch seguenti verificano a quale classe appartiene il campo indicato dal parametro fieldName (Comune, Localita, o Farmacia).
-				try {
-					Comune.class.getDeclaredField(fieldName);
-					has=true;
-					
-				}
-					catch(NoSuchFieldException e1) {
-						has=false;
-					}
-				
-				try {
-					Comune.class.getSuperclass().getDeclaredField(fieldName);
-					has=true;
-				}
-				catch(NoSuchFieldException e1) {
-					has=false;
-				}
-				
-				try {
-					Farmacia.class.getDeclaredField(fieldName);
-					has2=true;
-				}catch(NoSuchFieldException e1) {
-					has2=false;
-				}
-		if(has2) { //a seconda del risultato dei try-catch sopra, si chiama la versione di prelevaCampo adatta
-		ArrayList<Double> d = new ArrayList<Double>();
-		d=utils.prelevaCampo(f, fieldName);
-		return calc.stats(operatore, d);
+		try {
+			Comune.class.getDeclaredField(fieldName);
+			has=true;
+
 		}
-		if(has) {
+		catch(NoSuchFieldException e1) {
+			has=false;
+		}
+
+		try {
+			Comune.class.getSuperclass().getDeclaredField(fieldName);
+			has=true;
+		}
+		catch(NoSuchFieldException e1) {
+			has=false;
+		}
+
+		try {
+			Farmacia.class.getDeclaredField(fieldName);
+			has2=true;
+		}catch(NoSuchFieldException e1) {
+			has2=false;
+		}
+		if(has2) { //a seconda del risultato dei try-catch sopra, si chiama la versione di prelevaCampo adatta
+			ArrayList<Double> d = new ArrayList<Double>();
+			d=utils.prelevaCampo(f, fieldName);
+			return calc.stats(operatore, d);
+		}
+		else if(has) {
 			ArrayList<Double> d = new ArrayList<Double>();
 			d=utils.prelevaCampo(f, fieldName, "comune");
 			return calc.stats(operatore, d);
-		}
-		return 0;
+		} else return 0;
 	}
-	
+
 
 	/** Ritorna i Metadati degli oggetti Farmacia (ossia, per ogni oggetto al suo interno, l'alias dell'oggetto, l'attributo del dataset da cui deriva e il tipo)
 	 *  in formato JSON. Utilizza l'interfaccia {@link modelloDataSet.MetaData} per accedere all'informazione sui metadati. Poichè Farmacia contiene un riferimento
@@ -160,7 +159,7 @@ public class scannerDati implements Filter{
 		MetaData tmp = new Farmacia();
 		return tmp.getMetaDati().getData(); //getMetaDati() ritorna una variabile di tipo MetaDataStore, per cui usiamo il metodo getData() di MetaDataStore per ricavare i metadati veri e propri
 	}
-	
+
 	/**Ritorna i Metadati degli oggetti Comune (ossia, per ogni oggetto al suo interno, l'alias dell'oggetto, l'attributo del dataset da cui deriva e il tipo)
 	 * in formato JSON. Utilizza l'interfaccia {@link modelloDataSet.MetaData} per accedere all'informazione sui metadati. Poichè Comune contiene un riferimento
 	 * a Provincia, sono visualizzati in automatico anche i metadati di Provincia richiamando quelli di Comune.
@@ -173,7 +172,7 @@ public class scannerDati implements Filter{
 		MetaData tmp = new Comune();
 		return tmp.getMetaDati().getData(); //getMetaDati() ritorna una variabile di tipo MetaDataStore, per cui usiamo il metodo getData() di MetaDataStore per ricavare i metadati veri e propri
 	}
-	
+
 	/**Ritorna i Metadati degli oggetti Provincia (ossia, per ogni oggetto al suo interno, l'alias dell'oggetto, l'attributo del dataset da cui deriva e il tipo)
 	 * in formato JSON. Utilizza l'interfaccia {@link modelloDataSet.MetaData } per accedere all'informazione sui metadati.
 	 * @return ArrayList<JSONObject> - Metadati in formato JSON
@@ -185,7 +184,7 @@ public class scannerDati implements Filter{
 		MetaData tmp = new Provincia();
 		return tmp.getMetaDati().getData(); //getMetaDati() ritorna una variabile di tipo MetaDataStore, per cui usiamo il metodo getData() di MetaDataStore per ricavare i metadati veri e propri
 	}
-	
+
 	/**Cerca la Farmacia dato il nome
 	 * 
 	 * @param String - nome
@@ -211,13 +210,13 @@ public class scannerDati implements Filter{
 			double tmp1 = f.get(i).getComune().getLatitudine();
 			double tmp2 = f.get(i).getComune().getLongitudine();
 			if (tmp1 == lat && tmp2 == longi) {
-				p=f.get(i); System.out.println(p.getDescrizione());
+				p=f.get(i); 
 				return p;
 			}
 		}
 		return p;
 	}
-	
+
 	/**Cerca il Comune dato il nome
 	 * 
 	 * @param String nome - nome comune
@@ -234,7 +233,7 @@ public class scannerDati implements Filter{
 		}
 		return null;
 	}
-	
+
 	/**Cerca la Provincia dato il nome
 	 * 
 	 * @param String nome - nome provincia
@@ -251,7 +250,7 @@ public class scannerDati implements Filter{
 		}
 		return null;
 	}
-	
+
 	/**Ritorne le coordinate, data la Farmacia
 	 * 
 	 * @param String - Nome Farmacia
@@ -261,10 +260,10 @@ public class scannerDati implements Filter{
 		HashMap<String, Double> coordinate = new HashMap<String, Double> ();
 		Farmacia f2 = cerca(nome);
 		if(f2!=null) { //eccezione
-		coordinate.put("Latitudine", f2.getComune().getLatitudine());
-		coordinate.put("Longitudine", f2.getComune().getLongitudine()); 
-		return coordinate;
-	}
+			coordinate.put("Latitudine", f2.getComune().getLatitudine());
+			coordinate.put("Longitudine", f2.getComune().getLongitudine()); 
+			return coordinate;
+		}
 		else return null;
 	}
 
@@ -331,7 +330,7 @@ public class scannerDati implements Filter{
 		}
 		return p;
 	}
-	
+
 	/**
 	 * Ritorna l'elenco dei Dispensari (Farmacie con codice tipologia = 3) in una provincia.
 	 * @param String -- Nome Comune
@@ -346,7 +345,7 @@ public class scannerDati implements Filter{
 		}
 		return out;
 	}
-	
+
 	/**
 	 * Ritorna l'elenco dei Dispensari (Farmacie con codice tipologia = 3) in un comune.
 	 * @param String -- Nome Comune
@@ -362,7 +361,7 @@ public class scannerDati implements Filter{
 		}
 		return out;
 	}
-	
+
 	/**
 	 * Ritorna l'elenco dei Dispensari controllando il codice tipologia.
 	 * @return ArrayList<Farmacia> -- Elenco Dispensari
@@ -372,7 +371,11 @@ public class scannerDati implements Filter{
 		for(int i=0; i<f.size(); i++) {
 			if(f.get(i).getCodiceTipologia()==3) tmp.add(f.get(i));
 		}
-	return tmp;
+		return tmp;
+	}
+
+	public ArrayList<Farmacia> getDati(){
+		return f;
 	}
 
 }

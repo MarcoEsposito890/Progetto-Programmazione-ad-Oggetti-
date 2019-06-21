@@ -10,7 +10,7 @@ import modelloDataSet.Provincia;
  *
  */
 public class Checker extends scannerDati{
-	
+
 	Calcolatrice calc = new Calcolatrice();
 	ArrayList<Farmacia> f;
 	public Checker(ArrayList<Farmacia> f) {
@@ -37,21 +37,20 @@ public class Checker extends scannerDati{
 				String iva = Integer.toString((f.get(i).getPartitaIVA()));
 				if (!calc.formulaLunn(iva)) { // richiamo la funzione formulaLunn di Calcolatrice, che usa la Formula di  Lunn e ritorna vero se la verifica è andata a buon fine
 					// altrimenti, se la verifica non è andata a buon fine, segnalo l'errore	
-						errore = "Errore: " + f.get(i).getDescrizione()+ " Ha un errore nel codice di controllo della sua partita iva!"; 
-						p.add(errore);
-						System.out.println(p);
-						c++;
-					}
+					errore = "Errore: " + f.get(i).getDescrizione()+ " Ha un errore nel codice di controllo della sua partita iva!"; 
+					p.add(errore);
+					c++;
 				}
 			}
-			if (c == 0)
-				p.add("Controllo andato a buon fine!"); // segnala che non ci sono stati errori
-			else {
-				p.add("In totale " + c + " su " + c2 + " Hanno un Errore nel codice di controllo");
-			}
-			return p;
 		}
-	
+		if (c == 0)
+			p.add("Controllo andato a buon fine!"); // segnala che non ci sono stati errori
+		else {
+			p.add("In totale " + c + " su " + c2 + " Hanno un Errore nel codice di controllo");
+		}
+		return p;
+	}
+
 	/**Controlla se c'è un mismatch fra la partita IVA e il codice Provincia (terzultima e penultima cifra della partita IVA).
 	 * Le Farmacie di cui non è disponibile la partita IVA non vengono considerate.
 	 * @param String iva - Partita IVA
@@ -59,7 +58,7 @@ public class Checker extends scannerDati{
 	 * @return boolean - conferma o meno che il controllo sia andato a buon fine
 	 */
 	public boolean checkMismatch(String iva, Provincia p) {
-		if (iva.equals("0")) return true;
+		if (iva.equals("0")) return true; //non considero le Farmacie senza partita IVA
 		String codice = Integer.toString(p.getCodiceProvincia());
 		if(iva.substring(iva.length()-3, iva.length()-1).equals(codice)) return true;
 		return false;
@@ -77,10 +76,10 @@ public class Checker extends scannerDati{
 		ArrayList<Farmacia> tmp = new ArrayList<Farmacia>();
 		tmp=(ArrayList<Farmacia>) super.filterField(fieldName, "==", "0");
 		return tmp.size();
-		
+
 	}
 
-	
+
 }
 
 

@@ -1,6 +1,6 @@
 package Eccezioni;
 /**
- * Classe che gestisce eccezioni riguarda il passaggio di troppi parametri ad una richiesta GET.
+ * Classe che gestisce eccezioni riguardanti il passaggio di troppi parametri ad una richiesta GET.
  * @author Marco Esposito
  *
  */

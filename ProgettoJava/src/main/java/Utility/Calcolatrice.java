@@ -8,7 +8,7 @@ import java.util.ArrayList;
  *
  */
 public class Calcolatrice {
-	
+
 	/**
 	 * Realizza l'algoritmo di controllo per verificare il codice di controllo delle Partite IVA. In particolare, utilizza la Formula di Lunn
 	 * per calcolare il codice di controllo (una cifra), poi lo confronta con quello della Partita IVA in ingresso (ultima cifra).
@@ -21,7 +21,7 @@ public class Calcolatrice {
 		for(int i=0; i<cs.length()-1; i=i+2) {
 			X+=Double.parseDouble(cs.substring(i, i+1)); //X=somma delle cifre di indice dispari
 		}
-		
+
 		for(int i=1; i<cs.length()-1; i=i+2) {
 			Y+=2*Double.parseDouble(cs.substring(i, i+1)); //Y=somma delle cifre di indice pari
 		}
@@ -29,14 +29,14 @@ public class Calcolatrice {
 		for(int i=1; i<cs.length()-1; i=i+2) { 
 			if(Double.parseDouble(cs.substring(i, i+1))>=5) Z++; //Z=numero delle volte in cui nei numeri in posizione pari c'è un numero maggiore o uguale a 5
 		}
-		
+
 		T=(X+Y+Z)%10;
 		if(C==(10-T)%10) return true;
 		else return false;
 	}
 	/**
 	 * Calcola la statistica (indicata dall'operatore) sull'ArrayList in ingresso.
-	 * @param String operator - indica quale statistica calcolare fra media, varianza, minimo e massimo.
+	 * @param String - indica quale statistica calcolare fra media, varianza, minimo e massimo.
 	 * @return double - risultato della statistica
 	 * 
 	 */
@@ -47,7 +47,7 @@ public class Calcolatrice {
 		else if((operator.equalsIgnoreCase("min"))) return min(d);
 		return 0;
 	}
-	
+
 	/**
 	 * Calcola la media aritmetica.
 	 * @param ArrayList<Double> - ArrayList contenente i dati su cui calcolare la media
@@ -60,7 +60,7 @@ public class Calcolatrice {
 		}
 		return sum/d.size();
 	}
-	
+
 	/**
 	 * Calcola la varianza.
 	 * @param ArrayList<Double> - ArrayList contenente i dati su cui calcolare la varianza
@@ -73,7 +73,7 @@ public class Calcolatrice {
 			sommaScartiQuad += (d.get(i)-m)*(d.get(i)+m);
 		return sommaScartiQuad/d.size();
 	}
-	
+
 	/**
 	 * Trova il massimo dell'ArrayList in ingresso
 	 * @param ArrayList<Double> - ArrayList contenente i dati su cui trovare il massimo
@@ -86,7 +86,7 @@ public class Calcolatrice {
 		}
 		return m;
 	}
-	
+
 	/**
 	 * Trova il minimo dell'ArrayList in ingresso
 	 * @param ArrayList<Double> - ArrayList contenente i dati su cui trovare il minimo
@@ -99,7 +99,7 @@ public class Calcolatrice {
 		}
 		return m;
 	}
-	
+
 	/**
 	 * Utilizza la "Spherical Law of Cosines" per calcolare la distanza fra due punti note longitudine e latitudine dei due punti.
 	 * @param double - maxlat
@@ -111,9 +111,9 @@ public class Calcolatrice {
 	public double sphericalLawofCosines(double maxlat, double minlat, double maxlon, double minlon) {
 		return arccos(seno(rad(minlat))*seno(rad(maxlat)) +coseno(rad(minlat))*coseno(rad(maxlat))*coseno(rad(maxlon-minlon)))*6371;
 	}
-	
+
 	//funzioni di utilità
-	
+
 	/**confronta due numeri in ingresso e li ritorna in un ArrayList in ordine (prima il più grande, poi il più piccolo)
 	 * 
 	 * @param double a
@@ -131,27 +131,27 @@ public class Calcolatrice {
 		d.add(a);
 		return d;
 	}
-	
+
 	public double seno(double a) {
 		return Math.sin(a);
 	}
-	
+
 	public double coseno(double a) {
 		return Math.cos(a);
 	}
-	
+
 	public double arccos(double a) {
 		return Math.acos(a);
 	}
-	
+
 	public double arcsin(double a) {
 		return Math.asin(a);
 	}
-	
+
 	public double rad(double angle) {
 		return angle*3.14/180;
 	}
 
-	
-	
+
+
 }
